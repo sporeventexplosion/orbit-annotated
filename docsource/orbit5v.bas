@@ -5,19 +5,20 @@
 '# clarify code indentation. Some originally commented lines and unreferenced
 '# labels have been removed.
 
-'# `GOTO 9000` when an error occurs, most likely when opening `starsr`
+'# `GOTO 9000` when an error occurs, most likely when opening `starsr`.
 1111    ON ERROR GOTO 9000
 
 '# Prepare graphics mode: mode 12 is 640x480 pixels, 256k colors to 16
 '# attributes, and a char size of 8x16 or 8x8.
 '#
-'# Palette 8 is set to `#4c4c4c` and palette 15 to `#a8a8a8` in hex
+'# Palette 8 is set to `#4c4c4c` (dark gray) and palette 15 to `#a8a8a8`
+'# (light gray) in hex.
         SCREEN 12
         PALETTE 8, 19 + (19 * 256) + (19 * 65536)
         PALETTE 15, 42 + (42 * 256) + (42 * 65536)
 
 '# Make variables/arrays starting with a character from A to Z doubles by
-'# default
+'# default.
         DEFDBL A-Z
 
 '# Define a number of arrays for storing various information. Note that in BASIC
@@ -26,11 +27,38 @@
 '# `Pz` is an array of "singles" and `Znme$` is an array of strings,
 '# while all other are of "doubles".
 '#
-'# TODO: Determine the purposes of the following arrays
+'# - `P` possibly stands for "properties". Contains various properties of each
+'#   object (body).
+'#    - `P(i, 0)` is the draw color code of object `i`.
+'#    - `P(i, 1)` and `P(i, 2)` hold the "cumulative net" x and y acceleration
+'#      of object `i` in `m/s^2`. Used in the calculating change in velocity
+'#      of an object during each "step" of the simulation.
+'#    - `P(i, 4)` is the mass of object `i` in kg.
+'#    - `P(i, 5)` is the radius of object `i` in m.
+'# - `Px` and `Py` each contains values related to the position of each object
+'#   (TODO: clarify). It appears that `Px(i, 3)` and `Py(i, 3)` contain the x
+'#   and y positions of object `i` respectively in meters.
+'# - `Vx` and `Vy` respectively contain the x and y velocities of each object.
+'#   `Vx(i)` and `Vy(i)` contain the x and y velocities of object `i`
+'#   respectively in `m/s`.
+'# - `B` is an array of object pairs, the first of which in each pair applies a
+'#   gravitational force on the second. The first index denotes whether the
+'#   object is the first or second object in a pair, and the second index
+'#   denotes the pair number. Each value is an object "ID".
+'# - `Znme$` is an array of strings. The first 40 (index `0-39`) are names of
+'#   objects as read from `starsr` and the values of index 40, 41, 42,
+'#   hard-coded below, are respectively "TARGET", "Vtg", "Pch".
+'# - `panel` contains data for drawing the panel borders using box-drawing
+'#   characters in the main user interface. `panel(0, i)`, `panel(1, i)`, and
+'#   `panel(2, i)` each corresponds to the x coordinate, y coordinate, and
+'#   code page 437 character code in decimal for each box-drawing character.
+'#   Has have other uses (TODO: explain other uses).
+'#
+'# TODO: Determine the purposes of the all of the following arrays
         DIM P(40, 11), Px(40, 3), Py(40, 3), Vx(40), Vy(40), B(1, 250), Ztel(33), Znme$(42), panel(2, 265), TSflagVECTOR(20)
         DIM Pz(3021, 2) AS SINGLE
 
-'# Open `starsr` in "read-only" mode with filenumber #1
+'# Open `starsr` in "read-only" mode with filenumber #1.
 91      OPEN "I", #1, "starsr"
 
 '# Read the first 3021 lines of `starsr` into `Pz`, beginning with index 1 of
@@ -55,13 +83,8 @@
 '# `3263-3302`.
         FOR i = 0 TO 39
             INPUT #1, P(i, 0)
-
-            '# Appears to be the mass of each celestial object in kg
             INPUT #1, P(i, 4)
-
-            '# Appears to be the radius of each celestial object in m
             INPUT #1, P(i, 5)
-
             INPUT #1, P(i, 8)
             INPUT #1, P(i, 9)
             INPUT #1, P(i, 10)
@@ -79,22 +102,16 @@
         NEXT i
 
 '# Read the next 40 lines of `starsr` into `Znme$`, beginning with index 0 of
-'# `Pz`. Each of the 40 lines contains 0 string appearing to be the name of a
-'# celestial body. This corresponds to lines `3340-3379`
+'# `Pz`. Each of the 40 lines contains 1 string containing the name of an
+'# object. This corresponds to lines `3340-3379`
         FOR i = 0 TO 39
             INPUT #1, Znme$(i)
         NEXT i
 
-'# Read the next 265 lines of `starsr` into `panel`, beginning with second index
-'# 1 of `panel`. The value of the `i` is the first index and the value of
-'# the `j` is the second index. Each of the 265 lines contains 3 numbers. This
-'# corresponds to lines `3380-3644`.
-'#
-'# These lines and the `panel` represent data for drawing panel borders with
-'# box-drawing characters. Sub-indexes 0 and 1 (0-based) of each entry are the
-'# x and y coordinates (1-based) of the box drawing character to be drawn, and
-'# sub-index 2 represents the decimal code of the box-drawing
-'# character to be used as in "code page 437."
+'# Read the next 265 lines of `starsr` into `panel`, beginning with second
+'# index 1 of `panel`. The value of the `i` is the first index and the value
+'# of the `j` is the second index. Each of the 265 lines contains 3 numbers.
+'# This corresponds to lines `3380-3644`.
         FOR i = 1 TO 265
             FOR j = 0 TO 2
                 INPUT #1, panel(j, i)
@@ -109,18 +126,29 @@
 '# TODO: what is the following for?
         Px(37, 3) = 4446370.8284487# + Px(3, 3): Py(37, 3) = 4446370.8284487# + Py(3, 3): Vx(37) = Vx(3): Vy(37) = Vy(3)
 
-'# Close `starsr
+'# Close `starsr`.
         CLOSE #1
 '# Open `marsTOPOLG.RND` in "random" mode with filenumber #3 and record
 '# length 2.
         open "R", #3, "marsTOPOLG.RND",2
 
-'# TODO: what is this?
+'# The radius of "Hyperion", stored in a separate variable.
+
         PH5 = P(12, 5)
 
-'# Set a number of constants
+'# Set a number of constants.
+
+'# `ENGsetFLAG` indicates whether the engine is on (1) or not on (0). The
+'# default value, set below, is `1`, or "on"
         ENGsetFLAG = 1
+
+'# `mag` controls the magnification factor of the main display. Its effective
+'# unit can be understood to be pixels/AU. It is the length in display pixels
+'# of a 1 astronomical unit line. The default value, set below, is `25`, for
+'# 25 pixels per AU.
         mag = 25
+
+'# `ref` is the ID of the object currently used as the "reference" object.
         ref = 3
         trail = 1
         ts = .25
@@ -157,7 +185,7 @@
         TSflagVECTOR(16)=50
         TSflagVECTOR(17)=60
 
-'# The current timestep choice in terms of the index in TSflagVECTOR?
+'# The current timestep choice as an index in TSflagVECTOR?
 '#
 '# TODO: verify the above.
         TSindex=5
@@ -191,8 +219,8 @@
         if z$<>"" then 52
 
 '# If `z$` is empty, create input at (5, 5) on the screen (note that
-'# coordinates are 1-based) with the prompt `"Restart previous state (or type
-'# filename)? "` and store input in `y$`.
+'# coordinates are 1-based) with the prompt `Restart previous state (or type
+'# filename)? ` and store input in `y$`.
 '#
 '# If `q` is entered (case-insensitive), end the program.
 '#
@@ -245,46 +273,169 @@
         MARSelev=0
         CONflag2=0
 
+'# ## Calculation of acceleration due to gravity
+'#
+'# The following calculates gravitational acceleration caused by the first
+'# object on the second in each object pair in `B`. Note that in each pair,
+'# only the first object in the pair causes an acceleration on the second, and
+'# not vice versa. There must be a separate pair with swapped first and second
+'# objects for the second objects to cause acceleration on the first.
+'#
+'# `GOTO 106` is used like "continue". `106` is the `NEXT i` statement at the
+'# bottom of the loop.
         'Calculate gravitational acceleration for each object pair
         FOR i = 1 TO 241
+'# For each of the pairs:
+'#
+'# TODO: clarify all of the below
+'#
+'# "continue" if the first and second objects in the pair are the same object.
+'#
+'# If either `ufo1` or `ufo2` is `0` and one of the objects in the pair has
+'# ID 38 or 39, "continue". TODO: determine the use of `ufo1` and `ufo2`.
+'#
+'# If the second object of the pair is `"AYSE    "` (ID 32) and `AYSE` is 150,
+'# "continue."
             IF B(1, i) = B(0, i) THEN 106
             IF ufo1 = 0 AND (B(1, i) = 38 OR B(0, i) = 38) THEN 106
             IF ufo2 = 0 AND (B(1, i) = 39 OR B(0, i) = 39) THEN 106
             IF B(1, i) = 32 AND AYSE = 150 THEN 106
+
+'# Find the difference in x-coordinate and y-coordinate for the pair of
+'# of objects and store respectively in `difX` and `difY`.
             difX = Px(B(1, i), 3) - Px(B(0, i), 3)
             difY = Py(B(1, i), 3) - Py(B(0, i), 3)
+
+'# Calculates the angle from the first object to the second in radians. The
+'# result is in the variable `angle`.
             GOSUB 5000
+
+'# Calculate the distance between the two objects using the Pythagorean
+'# theorem. Clamp the minimum distance to a value of 0.01 m. TODO: confirm
+'# units.
             r = SQR((difY ^ 2) + (difX ^ 2))
             IF r < .01 THEN r = .01
+
+'# The magnitude of the acceleration caused to the second object by the first
+'# (both assumed to be point masses/spherically symmetric) is `G*m1/r^2` where
+'# m1 is the mass of the first object in the pair. `a` contains this value.
             a = G * P(B(0, i), 4) / (r ^ 2)
+
+'# Because `r * SIN(angle) = -difX` and `r * COS(angle) = -difY`,
+'# `(a * SIN(angle), a * COS(angle))` represents the acceleration vector of
+'# the second object of the pair towards the first.
+'#
+'# The second level indexes 1 and 2 of P appear to be the "net" acceleration.
+'# up to this point in the loop. TODO: confirm
             P(B(1, i), 1) = P(B(1, i), 1) + (a * SIN(angle))
             P(B(1, i), 2) = P(B(1, i), 2) + (a * COS(angle))
+
+'# TODO: find out why these cases of "Hyperion" and "artificial objects"
+'# receive special handling.
+'#
+'# Pairs 79, 136, 195, 230 are respectively "Hyperion" and "Habitat ",
+'# "Hyperion" and "AYSE    ", "Hyperion" and "PROBE   ", and "Hyperion" and
+'# "unknown "
             IF i = 79 OR i = 136 OR i = 195 OR i = 230 THEN GOSUB 166
+
+'# Pair 67 is "Mars    " and "Habitat ". If the current pair is pair 67 and
+'# the distance between the two is less than 3,443,500 m (TODO: confirm units)
+'# perform special handling:
+'#
+'# Set `ELEVangle` to angle, execute sub `8500`, and let `MARSelev=h` and
+'# `r=r-h`.
             if i = 67 and r<3443500 then ELEVangle=angle: gosub 8500: MARSelev=h:r=r-h
 
             'IF i = 79 THEN GOSUB 166
 
+'# The following lines perform special handling for "Habitat ", "AYSE    ",
+'# and "PROBE   ".
+'#
+'# If the second element in the pair is not one of the above, jump to `2`
+'# below. TODO: complete.
             IF B(1, i) <> 28 AND B(1, i) <> 32 AND B(1, i) <> 38 THEN 2
             IF (SGN(difX) <> -1 * SGN(Vx(B(1, i)) - Vx(B(0, i)))) OR (SGN(difY) <> -1 * SGN(Vy(B(1, i)) - Vy(B(0, i)))) THEN 2
             Vhab = SQR((Vx(B(1, i)) - Vx(B(0, i))) ^ 2 + (Vy(B(1, i)) - Vy(B(0, i))) ^ 2)
             IF r < ts * Vhab THEN ts = (r - (P(B(0, i), 5) / 2)) / Vhab
 
+'# The following performs extra special handling.
+
+'# If the second object in the pair is "AYSE    " and the distance between
+'# the (center of) the two objects is less than or equal to the sum of their
+'# radii, let `CONflag2=1` and `CONflag3=(the ID of the first object)`.
 2           IF B(1, i) = 32 AND r <= P(B(0, i), 5) + P(32, 5) THEN CONflag2 = 1: CONflag3 = B(0, i)': targ = 32
+
+'# If the second object in the pair is "Habitat " and (TODO: fully understand)
             IF B(1, i) = 28 AND P(B(0, i), 10) > -150 AND r <= P(B(0, i), 5) + P(28, 5) THEN CONflag = 1: CONtarg = B(0, i): Dcon = r: Acon = angle: CONacc = a
+
+'# If the second object in the pair is "Habitat " and the first object in the
+'# pair is not "AYSE    " and ...
+'# Something to do with atmospheric simulation (TODO: fully understand)
             IF B(1, i) = 28 AND B(0, i) <> 32 AND r <= P(B(0, i), 5) + (1000 * P(B(0, i), 10)) THEN atm = B(0, i): Ratm = (r - P(B(0, i), 5)) / 1000
+
+'# If the second object in the pair is "unknown " and the distance from the
+'# center of each is less than or equal to the sum of their radii (implying
+'# a collision of both objects are circular), set `explCENTER` (likely
+'# standing for "explosion center") to 39 (the ID of "unknown ") and go to sub
+'# `6000`.
             IF B(1, i) = 39 AND r <= P(B(0, i), 5) + P(39, 5) THEN explCENTER = 39: GOSUB 6000
+'# If the second object in the pair is "PROBE   " and the distance from the
+'# center of each is less than or equal to the sum of their radii, set
+'# `explCENTER` to 38 (the ID of "PROBE   ") and go to sub `6000`.
             IF B(1, i) = 38 AND r <= P(B(0, i), 5) + P(38, 5) THEN explCENTER = 38: GOSUB 6000
+
+'# If the pair is "Ganymede" first and "AYSE    " second and the distance from center of
+'# "AYSE    " and the center of "Ganymede" is less than the radius of
+'# "Ganymede" plus 1,000,000 m, (equivalently, "AYSE    " is less than
+'# 1,000,000 m from the surface of "Ganymede" (assumed to be a perfect circle,
+'# change the x position and y position of "Ganymede" to both be 1e30.
+'# Todo: understand why this exists
             if (B(1, i) = 32 and B(0, i) = 15) and r<1000000+P(15,5) then Px(15,3)=1e30: Py(15,3)= 1e30
+
+'# Get the angle and distance to the center of the target, relative to
+'# "Habitat", and the magnitude of the acceleration cause by the target on
+'# "Habitat". Store in the variables `Atarg`, `Dtarg`, and `Acctarg`
+'# respectively. Do the above if the first object in the pair is the target
+'# object and the second is "Habitat ". The values have already been computed
+'# above.
 5           IF B(0, i) = targ AND B(1, i) = 28 THEN Atarg = angle: Dtarg = r: Acctarg = a
+
+'# Calculate the theoretical speed of a circular orbit around the reference
+'# object relative to the reference object for the habitat at the current
+'# distance from the object's center. This only considers the gravitational
+'# force of the the reference object and not other objects. This value is
+'# stored in `Vref`. The angle and distance to the center of the reference
+'# objects are stored in `Aref` and `Dref` respectively using the values
+'# computed above.
 6           IF B(0, i) = ref AND B(1, i) = 28 THEN Vref = SQR(G * P(B(0, i), 4) / r): Aref = angle: Dref = r
+
+'# Get the angle to Ltr as calculated above (TODO: find what is Ltr) if the
+'# first object in the pair is Ltr and store it in the variable `LtrA`.
             IF B(0, i) = Ltr THEN LtrA = a
+
+'# Pair 163 is "AYSE    " and "Habitat ". `AYSEdist` is the distance between
+'# "AYSE    " and "Habitat " in m. Store the distance between the center of
+'# the two in `AYSEdist`.
+'#
+'# Pair 166 is "OCESS   " and "Habitat ". `OCESSdist` is the distance between
+'# "OCESS   " and "Habitat " in m. Store the distance between the center of
+'# the two in `OCESSdist`.
             IF i = 163 THEN AYSEdist = r
             IF i = 166 THEN OCESSdist = r
 106     NEXT i
+'# ## End of calculation of acceleration due to gravity
+
+'# If the center of "AYSE    " is more than 320 m from the center of
+'# "Habitat ", let `AYSE=0`. (TODO: find out what `AYSE` is)
         IF AYSEdist > 320 THEN AYSE = 0
+
+'# (TODO: find the meaning of the below)
         IF CONflag = 1 AND CONtarg = 12 THEN CONflag = .25
         'IF CONflag = 1 AND CONtarg = 14 THEN 9111
 
+'# Record the old (before position update in each step) position of the center
+'# of the center object in `cenX` and `cenY`.
+'# TODO: find what cenXoff and cenYoff do.
         'Record old center position
 101     cenX = Px(cen, 3) + cenXoff
         cenY = Py(cen, 3) + cenYoff
@@ -295,37 +446,121 @@
         IF SQR(((Px(28, 3) - cenX) * mag / AU) ^ 2 + ((Py(28, 3) - cenY) * mag * 1 / AU) ^ 2) > 400 THEN 132
         IF vflag = 1 THEN LINE (300 + (Px(28, 3) - cenX) * mag / AU, 220 + (Py(28, 3) - cenY) * mag * 1 / AU)-(300 + (20 * SIN(Vvangle)) + (Px(28, 3) - cenX) * mag / AU, 220 + (20 * COS(Vvangle)) + (Py(28, 3) - cenY) * mag * 1 / AU), 0
 
+'# Update the velocity of each object based on the acceleration calculated
+'# above. "cover" the previous object by drawing a black version of itself over
+'# it.
+'#
+'# Iterate every object from 37 (or different depending on `ufo1` and `ufo2`,
+'# TODO: clarify) to 0 in descending order.
+'#
+'# `GOTO 108` is used like "continue". `108` is the `NEXT i` statement at the
+'# bottom of the loop.
         'Update object velocities and erase old positions
 132     FOR i = 37 + ufo1 + ufo2 TO 0 STEP -1
+
+'# Special handling for "Habitat " and "PROBE   ". If the current object is
+'# "Habitat ", go to sub `301`. If it is "PROBE   ", go to sub `7200`.
             IF i = 28 THEN GOSUB 301
             IF i = 38 THEN GOSUB 7200
+
+'# Update velocity by adding to the original velocity the acceleration times
+'# the old timestep (TODO: find out why old timestep). If the new value is
+'# greater than 299999999.999 m/s (incidentally close to the speed of light),
+'# the velocity is not updated by skipping the parts that update the velocity
+'# to the new value.
             VxDEL = Vx(i) + (P(i, 1) * OLDts)
             VyDEL = Vy(i) + (P(i, 2) * OLDts)
             IF SQR(VxDEL ^ 2 + VyDEL ^ 2) > 299999999.999# THEN 117
             Vx(i) = VxDEL
             Vy(i) = VyDEL
+
+'# "Continue" if the current object is "Module  " and `MODULEflag` is 0.
 117         IF i = 36 AND MODULEflag = 0 THEN 108
+
+'# Special handling for "Mars    ". This means that "Mars    " is drawn
+'# regardless of how far "out of frame" it is.
             if i=4 then 11811
+
+'# If the distance of the center of the object to the display center in pixels
+'# (taking into account the magnification setting) minus the radius of the
+'# object in pixels is greater than 400 (pixels), "continue" (do not draw the
+'# object). This prevents the drawing of some objects that cannot be seen on
+'# the display.
             IF SQR(((Px(i, 3) - cenX) * mag / AU) ^ 2 + ((Py(i, 3) - cenY) * mag * 1 / AU) ^ 2) - (P(i, 5) * mag / AU) > 400 THEN 108
+
+'# The condition of the following if statement is only true if `cen` and `tr`
+'# are both positive (this appears to be the only possible situation). This
+'# would imply that `tr` is 1 ("enabled") and the center object is not
+'# "Sun     ". For unknown reasons, "continue" if this is the case.
+'# TODO: clarify.
 11811       IF cen * tr > 0 THEN 108
+
+'# The center of the display for drawing purposes is located at (300, 220),
+'# not the geometric center of the display (320, 240).
+'#
+'# After velocity update but before position update, draw a circle in black
+'# (color 0) (to cover old circle drawn in the previous frame, TODO: confirm)
+'# if `trail` is 0, or dark gray (color 8) to leave a "trail" at the object's
+'# previous position. **INCORRECT** TODO: fix
             IF mag * P(i, 5) / AU < 1.1 THEN CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag / AU), 1, 8 * trail: GOTO 108
+'# Set `clr` (most likely standing for "color", TODO: confirm) to 8 if `trail`
+'# is 1, and 0 if `trail` is 0.
             clr = 8 * trail
+
+'# `vnSa` is the angle of the habitat in radians, according to the
+'# convention of . Go to sub `128` to either "blank" the drawing of
+'# "Habitat " using black or to leave a "trail" using dark gray, depending on
+'# `trail`. "Continue" afterwards. The same process is done for "ISS     ",
+'# "OCESS   ", and "AYSE    ". These each have their custom draw procedure.
             IF i = 28 THEN vnSa = oldSa: GOSUB 128: GOTO 108
             IF i = 35 THEN GOSUB 138: GOTO 108
             IF i = 37 THEN GOSUB 148: GOTO 108
             IF i = 32 THEN clrMASK = 0: GOSUB 158: GOTO 108
             IF i = 12 AND HPdisp = 1 THEN 108
+
+'# Jump to `118` to perform special drawing if the radius of the current object
+'# in display pixels is greater than 300.
             if P(i,5)*mag/AU>300 then 118
+
+'# If no special handling is needed, draw a circle with color black or dark gray
+'# depending on `trail` to "cover" the old circle or to leave a "trail".
+'#
+'# `(Px(i, 3) - cenX) * mag / AU` and `(Py(i, 3) - cenY) * mag * 1 / AU)` are
+'# respectively the x and y positions of the current object relative to the
+'# current center, converted into display pixels with regard to the current
+'# magnification level. These screen coordinates are offset so that the center
+'# corresponds to the screen position (300, 220). `mag * P(i, 5) / AU` is the
+'# radius of the current object, converted into display pixels. "Continue" after
+'# drawing this circle.
             CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, 8 * trail: GOTO 108
 
+'# `difX` and `difY` represent the distance from the display center to the
+'# center of the current object, in m. `dist` is the distance of the center of
+'# the object to the display center in pixels minus the radius of the object
+'# in pixels. Go to sub `5000` to calculate an "atan2", with the result in
+'# `angle`.
 118         difX = cenX-Px(i, 3)
             difY = cenY-Py(i, 3)
             dist = (SQR((difY ^ 2) + (difX ^ 2)) - P(i, 5)) * mag / AU
             GOSUB 5000
 
-
+'# Convert `angle` from radians to degrees and multiply the result by 160,
+'# then round the angle and then convert it back to radians.
+'#
+'# The two lines have the effect of rounding the angle to 160ths of a degree.
+'#
+'# `fix` is like `trunc` in some other languages. The function truncates the
+'# digits after the decimal point, irrespective of sign. For positive values
+'# of `x`, `fix(x + 0.5)` is equivalent to `round(x)`.
             angle = angle * rad*160   '32
             angle=fix(angle+.5)/rad/160  '32
+
+'# `P(i, 5) * pi2` is the circumference of the current object (assuming a
+'# perfect circle). This is converted to display pixel units by multiplying by
+'# `mag/AU`, which takes into account the current magnification. The value
+'# computed is the circumference of the current object in display pixels. The
+'# computation is mathematically equivalent to `400 / (P(i,5) * mag / AU`.
+'# TODO: this is very confusing. Understand
             arcANGLE = pi * 800/ (P(i,5)*pi2*mag/AU)
             if arcANGLE>pi then arcANGLE=pi
             stepANGLE=arcANGLE/90
@@ -353,6 +588,8 @@
 108     NEXT i
         GOTO 102
 
+'# Draw "Habitat ", a structure consisting of one large circle and three
+'# smaller circles on one side.
             'Paint Habitat
 128         CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, clr
             CIRCLE (300 + (Px(i, 3) - cenX - (P(i, 5) * .8 * SIN(vnSa))) * mag / AU, 220 + (Py(i, 3) - cenY - (P(i, 5) * .8 * COS(vnSa))) * mag * 1 / AU), mag * P(i, 5) * .2 / AU, clr
@@ -495,7 +732,6 @@
 168     IF i = 79 AND targ = 12 THEN Dtarg = rD: RcritL = P(12, 5) - PH5prime: Atarg = AtargPRIME: Acctarg = a
         RETURN 106
 
-
         'Detect contact with an object
 102     IF CONflag = 0 THEN 112
         MATCHaacc=0
@@ -516,9 +752,6 @@
         Px(28, 3) = Px(CONtarg, 3) + ((P(CONtarg, 5) + P(28, 5) - .1 + ALTdel) * SIN(Acon + 3.1415926#))
         Py(28, 3) = Py(CONtarg, 3) + ((P(CONtarg, 5) + P(28, 5) - .1 + ALTdel) * COS(Acon + 3.1415926#))
         explFLAG1 = 1
-
-
-
 
         'Docked with AYSE drive module
 112     explFLAG2 = 0
@@ -987,10 +1220,19 @@
 
         'SUBROUTINE print control variable names to screen
 405     CLS
+
+'# `HPdisp` (possibly standing for "Hyperion display") appears to be a
+'# variable controlling the drawing of "Hyperion". TODO: confirm.
         HPdisp = 0
 400     IF mag < .1 THEN GOSUB 8000
+
+'# Clamp the minimum and maximum `ts` to 0.015625 and 60 respectively and
+'# update `TSindex` to be either the smallest or largest one if `ts` is out
+'# of bounds.
         IF ts < .015625 THEN ts = .015626:TSindex=1
         IF ts > 60 THEN ts = 60:TSindex=17
+
+'# TODO: understand.
         IF Dfuel > 2 THEN Dfuel = 0
         IF ufo2 = 1 THEN ts = .25: TSindex=5
         COLOR 8
@@ -1005,11 +1247,20 @@
         NEXT j
 
 403     COLOR 7
+
+'# TODO: understand
         IF Ztel(1) = 1 THEN Sflag = 1
+
+'# Output labels
         LOCATE 2, 2: PRINT "ref Vo   ";
         LOCATE 3, 2: PRINT "V hab-ref";
         LOCATE 4, 2: PRINT "Vtarg-ref";
+
         COLOR 7
+
+'# Output engine throttle label and engine throttle setting in dark gray if
+'# `ENGsetFLAG` is 0 and light gray if it is 1, using the format string
+'# `"####.#_ "`.
         LOCATE 5, 2: PRINT "Engine"; : LOCATE 5, 16: COLOR 8 + (7 * ENGsetFLAG): PRINT USING "####.#_ "; eng;
         COLOR 7 + (5 * Ztel(1))
         LOCATE 25, 2: PRINT "NAVmode";
@@ -1105,11 +1356,21 @@
         RETURN
 
 
+'# Create a file loading prompt. Curiously, `"Load File: "` is output first
+'# at (10, 60), then followed by an input with a blank prompt.
+'#
+'# If the input is empty, jump to 703.
+'#
+'# If not, set `DEBUGflag` to 1 (TODO: find the use of `DEBUGflag`) and
+'# jump to 701 (the code for reading and loading saves).
         'SUBROUTINE Restore data from file
 700     LOCATE 10, 60: PRINT "Load File: "; : INPUT ; "", filename$
         IF filename$ = "" THEN 703
         DEBUGflag=1
         goto 701
+
+'# Cover any content on row 10 from column 60 to 77 (78-80 are not covered)
+'# and then jump to 700 to show a load file prompt.
 702     LOCATE 10, 60: PRINT "                  ";
         GOTO 700
 
@@ -1140,12 +1401,26 @@
 '# If either `chkCHAR1$` and `chkCHAR2$` are not the same or `ORBITversion` is
 '# not equal to "ORBIT5S", output `filename$;" is unusable"` at (11,60) and
 '# jump to 702.
+
         if len(inpSTR$) <> 1427 then locate 11,60:print filename$;" is unusable";:goto 702
         chkCHAR1$=left$(inpSTR$,1)
         chkCHAR2$=right$(inpSTR$,1)
         ORBITversion$=mid$(inpSTR$, 2, 7)
         if chkCHAR1$<>chkCHAR2$ then locate 11,60:print filename$;" is unusable";:goto 702
         if ORBITversion$<>"ORBIT5S" then locate 11,60:print filename$;" is unusable";:goto 702
+
+'# **Summary**; The initialization process is as follows. First a prompt is
+'# shown asking the user to enter a file name to open. If this file exists and
+'# is valid, the data is loaded in, and the program continues with this file.
+'# If nothing is entered, the program tries to load `OSBACKUP.RND` and
+'# continue with it. If an broken file is entered, or if the file entered does
+'# not exist (including the case where nothing is entered and `OSBACKUP.RND`
+'# is loaded by default), a different prompt will show up asking the user to
+'# enter a valid save file name. The prompt will not go away until a valid
+'# file is loaded. If nothing is entered at this prompt and the user simply
+'# presses `Enter`, a save file will not be loaded and a fresh simulation will
+'# be created based on data loaded from `starsr` at the beginning of the
+'# program.
 
 '# `k` serves as a sort of pointer for reading the `inpSTR$` data string. It
 '# starts from byte 17. TODO: find what bytes 9-16 are for.
@@ -1182,10 +1457,10 @@
 '# - `cen`: `integer`, bytes `47-48`
         cen = cvi(mid$(inpSTR$,k,2)):k=k+2
 
-'# - `targ`: `integer`, bytes `49-50`
+'# - `targ`: `integer`, bytes `49-50`. The ID of the target object.
         targ = cvi(mid$(inpSTR$,k,2)):k=k+2
 
-'# - `ref`: `integer`, bytes `51-52`
+'# - `ref`: `integer`, bytes `51-52`. The ID of the reference object.
         ref = cvi(mid$(inpSTR$,k,2)):k=k+2
 
 '# - `trail`: `integer`, bytes `53-54`
@@ -1197,7 +1472,11 @@
 '# - `SRB`: `single`, bytes `59-62`
         SRB = cvs(mid$(inpSTR$,k,4)):k=k+4
 
-'# - `tr`: `integer`, bytes `63-64`
+'# - `tr`: `integer`, bytes `63-64`. As far as can be deduced from the
+'#   executable, `tr` is a flag, that when set to 1, makes objects leave
+'#   colored trails in their display color. Appears to override the effects
+'#   of `trail`, which leaves gray traces (but may only be because `tr` is
+'#   painted after `trail`, TODO: confirm).
         tr = cvi(mid$(inpSTR$,k,2)):k=k+2
 
 '# - `dte`: `integer`, bytes `65-66`
@@ -1254,10 +1533,12 @@
 '# - `MODULEflag`: `integer`, bytes `129-130`
         MODULEflag = cvi(mid$(inpSTR$,k,2)):k=k+2
 
-'# - `AYSEdist`: `single`, bytes `131-134`
+'# - `AYSEdist`: `single`, bytes `131-134`: Distance to "Habitat " to
+'#   "AYSE    "
         AYSEdist = cvs(mid$(inpSTR$,k,4)):k=k+4
 
-'# - `OCESSdist`: `single`, bytes `135-138`
+'# - `OCESSdist`: `single`, bytes `135-138`: Distance from "Habitat " to
+'#   "OCESS   "
         OCESSdist = cvs(mid$(inpSTR$,k,4)):k=k+4
 
 '# - `explosion`: `integer`, bytes `139-140`
@@ -1301,7 +1582,7 @@
 
 '# Two more variables are read:
 
-'# - `fuel`: `single`, bytes `1419-1422`
+'# - `fuel`: `single`, bytes `1419-1422`. The amount of fuel in the Habitat
         fuel = cvs(mid$(inpSTR$,k,4)):k=k+4
 
 '# - `AYSEfuel`: `single`, bytes `1423-1426`
@@ -1322,17 +1603,31 @@
             if TSflagVECTOR(i)=ts then TSindex=i:goto 713
         next i
 
-'# TODO: understand
+'# "OCESS   " is placed in a special hard-coded location relative to
+'# "Earth   ". Upon file load, it is always placed about 6,288,118 m from the
+'# center of Earth in the direction 45deg clockwise of right relative to the
+'# center of "Earth   ". This code puts "OCESS   " at this fixed offset from
+'# the center of "Earth   " and matches its velocity with that of "Earth   ".
 713     Px(37, 3) = 4446370.8284487# + Px(3, 3): Py(37, 3) = 4446370.8284487# + Py(3, 3): Vx(37) = Vx(3): Vy(37) = Vy(3)
+
+'# Zero out the position, velocity, and "cumulative net acceleration" of
+'# "PROBE   " (ID 38) and "unknown " (ID 39). (TODO: find why this is needed)
         Px(38, 3) = 0: Py(38, 3) = 0: Vx(38) = 0: Vy(38) = 0: P(38, 1) = 0: P(38, 2) = 0
         Px(39, 3) = 0: Py(39, 3) = 0: Vx(39) = 0: Vy(39) = 0: P(39, 1) = 0: P(39, 2) = 0
+
+'# TODO: understand
         tttt = TIMER + ts
         ufo1 = 0
         ufo2 = 0
         cenXoff = 0
         cenYoff = 0
+
+'# The x and y coordinates of the center object are assigned to `cenX` and
+'# `cenY` (likely standing for "center x" and "center y")
         cenX = Px(cen, 3)
         cenY = Py(cen, 3)
+
+'# TODO: understand
 703     explosion = 0
         explosion1 = 0
         GOSUB 405
@@ -1517,16 +1812,16 @@
         RETURN
 
 
+'# Subroutine for exioting the  program. Create an input with prompt
+'# `End Program ` at (10, 60). If the  input is `y` (case-insensitive), end
+'# the program. Otherwise, cover the prompt and any input with spaces (the
+'# last two characters on the right side are not covered due to there only
+'# being 19 spaces in the "cover" string and not 21) and return.
         'Confirm end program
 900     LOCATE 10, 60: INPUT ; "End Program "; z$
         IF UCASE$(z$) = "Y" THEN END
         LOCATE 10, 60: PRINT "                   ";
         RETURN
-
-        'Name and author
-'910     LOCATE 2, 60: PRINT "OCESS Orbit 5 T  ";
-        'LOCATE 3, 60: PRINT CHR$(74); CHR$(97); CHR$(109); CHR$(101); CHR$(115); " "; CHR$(77); CHR$(97); CHR$(103); CHR$(119); CHR$(111); CHR$(111); CHR$(100);
-        'RETURN
 
         'Orbit Projection
 3000    GOSUB 3005
@@ -1700,6 +1995,15 @@
 3299    RETURN
 
 
+'# An implementation of something similar to `atan2`. Calculates the angle
+'# from the first object in a pair to the second based on `difX` and `difY`.
+'#
+'# The resulting angle is the angle (counterclockwise) of the second object
+'# relative to the first, in radians, with the negative y direction (upward on
+'# the display, TODO: confirm) being the direction for which the angle equals
+'# 0. The value of `angle` is in the interval [0, 2pi).
+'#
+'# If `difX` and `difY` are both 0, the resulting `angle` is 1.5 pi.
 
 5000    IF difY = 0 THEN IF difX < 0 THEN angle = .5 * 3.1415926535# ELSE angle = 1.5 * 3.1415926535# ELSE angle = ATN(difX / difY)
         IF difY > 0 THEN angle = angle + 3.1415926535#
@@ -1782,6 +2086,7 @@
         Vy(38) = Vy(38) + (Ztel(22) * ts * COS(angle))
         RETURN
 
+'# Draw the background stars. TODO: confirm and elaborate
 8000    FOR i = 1 TO 3021
             IF ABS(300 + (Pz(i, 1) - cenX) * mag / AU) > 1000 THEN 8001
             IF ABS(220 + (Pz(i, 2) - cenY) * mag / AU) > 1000 THEN 8001
@@ -1845,11 +2150,24 @@
                         h=h+(h4*(LATdel)*(LNGdel))
                 return
 
-
+'# Error handler. Output at (1, 30) `'stars' file is missing or incomplete` if
+'# the line number of the line where the error occurred (the 1-based source
+'# code line number, not the BASIC "label" line number) is 91.
+'#
+'# The line number of the line where `starsr` is first opened in the
+'# un-annotated version of this file is line 8 (but it does have a "label" for
+'# 91) (note that the source line  number has shifted due to the extra
+'# annotations), so even if `starsr` fails to open, this message is not shown
+'# (likely unintended behavior).
 9000    LOCATE 1, 30
-
         IF ERL = 91 THEN CLOSE #1: CLS : PRINT "'stars' file is missing or incomplete"
+
+'# Output the error number and error line number (as described above).
         PRINT ERR, ERL
+
+'# The `INPUT$(1)` reads 1 character from the console (blocking). This is used
+'# to implement a sort of "press any key to continue." After any key is
+'# is pressed, the program ends.
         z$ = INPUT$(1)
         END
 

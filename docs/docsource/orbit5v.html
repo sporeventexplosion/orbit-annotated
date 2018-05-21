@@ -44,7 +44,7 @@ labels have been removed.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p><code>GOTO 9000</code> when an error occurs, most likely when opening <code>starsr</code></p>
+              <p><code>GOTO 9000</code> when an error occurs, most likely when opening <code>starsr</code>.</p>
 
             </div>
             
@@ -61,7 +61,8 @@ labels have been removed.</p>
               </div>
               <p>Prepare graphics mode: mode 12 is 640x480 pixels, 256k colors to 16
 attributes, and a char size of 8x16 or 8x8.</p>
-<p>Palette 8 is set to <code>#4c4c4c</code> and palette 15 to <code>#a8a8a8</code> in hex</p>
+<p>Palette 8 is set to <code>#4c4c4c</code> (dark gray) and palette 15 to <code>#a8a8a8</code>
+(light gray) in hex.</p>
 
             </div>
             
@@ -79,7 +80,7 @@ attributes, and a char size of 8x16 or 8x8.</p>
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>Make variables/arrays starting with a character from A to Z doubles by
-default</p>
+default.</p>
 
             </div>
             
@@ -98,7 +99,37 @@ default</p>
 an array <code>A(10)</code> has 11 elements.</p>
 <p><code>Pz</code> is an array of “singles” and <code>Znme$</code> is an array of strings,
 while all other are of “doubles”.</p>
-<p>TODO: Determine the purposes of the following arrays</p>
+<ul>
+<li><code>P</code> possibly stands for “properties”. Contains various properties of each
+object (body).<ul>
+<li><code>P(i, 0)</code> is the draw color code of object <code>i</code>.</li>
+<li><code>P(i, 1)</code> and <code>P(i, 2)</code> hold the “cumulative net” x and y acceleration
+of object <code>i</code> in <code>m/s^2</code>. Used in the calculating change in velocity
+of an object during each “step” of the simulation.</li>
+<li><code>P(i, 4)</code> is the mass of object <code>i</code> in kg.</li>
+<li><code>P(i, 5)</code> is the radius of object <code>i</code> in m.</li>
+</ul>
+</li>
+<li><code>Px</code> and <code>Py</code> each contains values related to the position of each object
+(TODO: clarify). It appears that <code>Px(i, 3)</code> and <code>Py(i, 3)</code> contain the x
+and y positions of object <code>i</code> respectively in meters.</li>
+<li><code>Vx</code> and <code>Vy</code> respectively contain the x and y velocities of each object.
+<code>Vx(i)</code> and <code>Vy(i)</code> contain the x and y velocities of object <code>i</code>
+respectively in <code>m/s</code>.</li>
+<li><code>B</code> is an array of object pairs, the first of which in each pair applies a
+gravitational force on the second. The first index denotes whether the
+object is the first or second object in a pair, and the second index
+denotes the pair number. Each value is an object “ID”.</li>
+<li><code>Znme$</code> is an array of strings. The first 40 (index <code>0-39</code>) are names of
+objects as read from <code>starsr</code> and the values of index 40, 41, 42,
+hard-coded below, are respectively “TARGET”, “Vtg”, “Pch”.</li>
+<li><code>panel</code> contains data for drawing the panel borders using box-drawing
+characters in the main user interface. <code>panel(0, i)</code>, <code>panel(1, i)</code>, and
+<code>panel(2, i)</code> each corresponds to the x coordinate, y coordinate, and
+code page 437 character code in decimal for each box-drawing character.
+Has have other uses (TODO: explain other uses).</li>
+</ul>
+<p>TODO: Determine the purposes of the all of the following arrays</p>
 
             </div>
             
@@ -114,7 +145,7 @@ while all other are of “doubles”.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Open <code>starsr</code> in “read-only” mode with filenumber #1</p>
+              <p>Open <code>starsr</code> in “read-only” mode with filenumber #1.</p>
 
             </div>
             
@@ -177,7 +208,13 @@ while all other are of “doubles”.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>        FOR i = 0 TO 39
-            INPUT #1, P(i, 0)</pre></div></div>
+            INPUT #1, P(i, 0)
+            INPUT #1, P(i, 4)
+            INPUT #1, P(i, 5)
+            INPUT #1, P(i, 8)
+            INPUT #1, P(i, 9)
+            INPUT #1, P(i, 10)
+        NEXT i</pre></div></div>
             
         </li>
         
@@ -187,41 +224,6 @@ while all other are of “doubles”.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p>Appears to be the mass of each celestial object in kg</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            INPUT #1, P(i, 4)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Appears to be the radius of each celestial object in m</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            INPUT #1, P(i, 5)
-
-            INPUT #1, P(i, 8)
-            INPUT #1, P(i, 9)
-            INPUT #1, P(i, 10)
-        NEXT i</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Read the next line of <code>starsr</code> into <code>year</code>, <code>day</code>, <code>hr</code>, <code>min</code>, <code>sec</code>. This
 line appears to be a timestamp. This corresponds to line <code>3303</code>.</p>
@@ -233,11 +235,11 @@ line appears to be a timestamp. This corresponds to line <code>3303</code>.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Read the next 36 lines of <code>starsr</code> into different parts of <code>Px</code>, <code>Py</code>, <code>Vx</code>,
 <code>Vy</code>, and <code>P</code>, beginning with index 0 of each of the above arrays. Each of
@@ -252,15 +254,15 @@ the 36 lines contains 6 numbers. This corresponds to lines <code>3304-3339</code
         </li>
         
         
-        <li id="section-14">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Read the next 40 lines of <code>starsr</code> into <code>Znme$</code>, beginning with index 0 of
-<code>Pz</code>. Each of the 40 lines contains 0 string appearing to be the name of a
-celestial body. This corresponds to lines <code>3340-3379</code></p>
+<code>Pz</code>. Each of the 40 lines contains 1 string containing the name of an
+object. This corresponds to lines <code>3340-3379</code></p>
 
             </div>
             
@@ -271,21 +273,16 @@ celestial body. This corresponds to lines <code>3340-3379</code></p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Read the next 265 lines of <code>starsr</code> into <code>panel</code>, beginning with second index
-1 of <code>panel</code>. The value of the <code>i</code> is the first index and the value of
-the <code>j</code> is the second index. Each of the 265 lines contains 3 numbers. This
-corresponds to lines <code>3380-3644</code>.</p>
-<p>These lines and the <code>panel</code> represent data for drawing panel borders with
-box-drawing characters. Sub-indexes 0 and 1 (0-based) of each entry are the
-x and y coordinates (1-based) of the box drawing character to be drawn, and
-sub-index 2 represents the decimal code of the box-drawing
-character to be used as in “code page 437.”</p>
+              <p>Read the next 265 lines of <code>starsr</code> into <code>panel</code>, beginning with second
+index 1 of <code>panel</code>. The value of the <code>i</code> is the first index and the value
+of the <code>j</code> is the second index. Each of the 265 lines contains 3 numbers.
+This corresponds to lines <code>3380-3644</code>.</p>
 
             </div>
             
@@ -298,11 +295,11 @@ character to be used as in “code page 437.”</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Set a few hard-coded strings in <code>Znme$</code>.</p>
 
@@ -315,11 +312,11 @@ character to be used as in “code page 437.”</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>TODO: what is the following for?</p>
 
@@ -330,13 +327,13 @@ character to be used as in “code page 437.”</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>Close `starsr</p>
+              <p>Close <code>starsr</code>.</p>
 
             </div>
             
@@ -345,11 +342,11 @@ character to be used as in “code page 437.”</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Open <code>marsTOPOLG.RND</code> in “random” mode with filenumber #3 and record
 length 2.</p>
@@ -361,17 +358,47 @@ length 2.</p>
         </li>
         
         
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>The radius of “Hyperion”, stored in a separate variable.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+        PH5 = P(12, 5)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Set a number of constants.</p>
+
+            </div>
+            
+        </li>
+        
+        
         <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>TODO: what is this?</p>
+              <p><code>ENGsetFLAG</code> indicates whether the engine is on (1) or not on (0). The
+default value, set below, is <code>1</code>, or “on”</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        PH5 = P(12, 5)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        ENGsetFLAG = 1</pre></div></div>
             
         </li>
         
@@ -382,17 +409,14 @@ length 2.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>Set a number of constants</p>
+              <p><code>mag</code> controls the magnification factor of the main display. Its effective
+unit can be understood to be pixels/AU. It is the length in display pixels
+of a 1 astronomical unit line. The default value, set below, is <code>25</code>, for
+25 pixels per AU.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        ENGsetFLAG = 1
-        mag = 25
-        ref = 3
-        trail = 1
-        ts = .25
-        fuel = 2000
-        AYSEfuel = 15120000</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        mag = 25</pre></div></div>
             
         </li>
         
@@ -402,6 +426,25 @@ length 2.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p><code>ref</code> is the ID of the object currently used as the “reference” object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        ref = 3
+        trail = 1
+        ts = .25
+        fuel = 2000
+        AYSEfuel = 15120000</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Set a number of physical, mathematical, and astronomical constants:</p>
 <ul>
@@ -422,11 +465,11 @@ length 2.</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Something to do with timesteps. TODO: find exact function of TSFlagVECTOR.</p>
 
@@ -453,13 +496,13 @@ length 2.</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>The current timestep choice in terms of the index in TSflagVECTOR?</p>
+              <p>The current timestep choice as an index in TSflagVECTOR?</p>
 <p>TODO: verify the above.</p>
 
             </div>
@@ -469,11 +512,11 @@ length 2.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>TODO: what is this?</p>
 
@@ -484,11 +527,11 @@ length 2.</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Open <code>orbitstr.txt</code> in “read-only” mode with filenumber #1.</p>
 <p>If the orbitstr file is empty, let <code>z$=&quot;&quot;</code>, close the file and skip to
@@ -517,15 +560,15 @@ cases, jump to <code>52</code>. If <code>z$</code> is <code>&quot;RESTART&quot;<
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>If <code>z$</code> is empty, create input at (5, 5) on the screen (note that
-coordinates are 1-based) with the prompt <code>&quot;Restart previous state (or type
-filename)? &quot;</code> and store input in <code>y$</code>.</p>
+coordinates are 1-based) with the prompt <code>Restart previous state (or type
+filename)?</code> and store input in <code>y$</code>.</p>
 <p>If <code>q</code> is entered (case-insensitive), end the program.</p>
 <p>If <code>y</code> (case-insensitive) or the empty string is entered, let
 <code>z$=&quot;OSBACKUP&quot;</code> and jump to <code>52</code>.</p>
@@ -544,11 +587,11 @@ to <code>52</code> if input is <code>&quot;y&quot;</code> (case-insensitive) or 
         </li>
         
         
-        <li id="section-28">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>The <code>end</code> on this line appear to be unreachable.</p>
 
@@ -559,11 +602,11 @@ to <code>52</code> if input is <code>&quot;y&quot;</code> (case-insensitive) or 
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Let <code>filename$ = z$</code>. Go to sub <code>701</code>. After return, go to sub <code>405</code>.</p>
 
@@ -575,11 +618,11 @@ to <code>52</code> if input is <code>&quot;y&quot;</code> (case-insensitive) or 
         </li>
         
         
-        <li id="section-30">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p><code>TIMER</code> “returns the amount of time that has passed since a static
 reference point”. Initialize tttt using this value.</p>
@@ -592,11 +635,11 @@ reference point”. Initialize tttt using this value.</p>
         </li>
         
         
-        <li id="section-31">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Set <code>P(i, 1)</code> and <code>P(1, 2)</code> for p from 1-35 (both inclusive), 38, and 39
 to 0. TODO: Find why not 36, 37, and 40.</p>
@@ -624,49 +667,462 @@ to 0. TODO: Find why not 36, 37, and 40.</p>
         explFLAG1 = 0
         COLeventTRIG = 0
         MARSelev=0
-        CONflag2=0
+        CONflag2=0</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <h2 id="calculation-of-acceleration-due-to-gravity">Calculation of acceleration due to gravity</h2>
+<p>The following calculates gravitational acceleration caused by the first
+object on the second in each object pair in <code>B</code>. Note that in each pair,
+only the first object in the pair causes an acceleration on the second, and
+not vice versa. There must be a separate pair with swapped first and second
+objects for the second objects to cause acceleration on the first.</p>
+<p><code>GOTO 106</code> is used like “continue”. <code>106</code> is the <code>NEXT i</code> statement at the
+bottom of the loop.</p>
 
-        'Calculate gravitational acceleration for each object pair
-        FOR i = 1 TO 241
-            IF B(1, i) = B(0, i) THEN 106
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        'Calculate gravitational acceleration for each object pair
+        FOR i = 1 TO 241</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>For each of the pairs:</p>
+<p>TODO: clarify all of the below</p>
+<p>“continue” if the first and second objects in the pair are the same object.</p>
+<p>If either <code>ufo1</code> or <code>ufo2</code> is <code>0</code> and one of the objects in the pair has
+ID 38 or 39, “continue”. TODO: determine the use of <code>ufo1</code> and <code>ufo2</code>.</p>
+<p>If the second object of the pair is <code>&quot;AYSE    &quot;</code> (ID 32) and <code>AYSE</code> is 150,
+“continue.”</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF B(1, i) = B(0, i) THEN 106
             IF ufo1 = 0 AND (B(1, i) = 38 OR B(0, i) = 38) THEN 106
             IF ufo2 = 0 AND (B(1, i) = 39 OR B(0, i) = 39) THEN 106
-            IF B(1, i) = 32 AND AYSE = 150 THEN 106
-            difX = Px(B(1, i), 3) - Px(B(0, i), 3)
-            difY = Py(B(1, i), 3) - Py(B(0, i), 3)
-            GOSUB 5000
-            r = SQR((difY ^ 2) + (difX ^ 2))
-            IF r &lt; .01 THEN r = .01
-            a = G * P(B(0, i), 4) / (r ^ 2)
-            P(B(1, i), 1) = P(B(1, i), 1) + (a * SIN(angle))
-            P(B(1, i), 2) = P(B(1, i), 2) + (a * COS(angle))
-            IF i = 79 OR i = 136 OR i = 195 OR i = 230 THEN GOSUB 166
-            if i = 67 and r&lt;3443500 then ELEVangle=angle: gosub 8500: MARSelev=h:r=r-h
+            IF B(1, i) = 32 AND AYSE = 150 THEN 106</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Find the difference in x-coordinate and y-coordinate for the pair of
+of objects and store respectively in <code>difX</code> and <code>difY</code>.</p>
 
-            'IF i = 79 THEN GOSUB 166
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            difX = Px(B(1, i), 3) - Px(B(0, i), 3)
+            difY = Py(B(1, i), 3) - Py(B(0, i), 3)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>Calculates the angle from the first object to the second in radians. The
+result is in the variable <code>angle</code>.</p>
 
-            IF B(1, i) &lt;&gt; 28 AND B(1, i) &lt;&gt; 32 AND B(1, i) &lt;&gt; 38 THEN 2
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            GOSUB 5000</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>Calculate the distance between the two objects using the Pythagorean
+theorem. Clamp the minimum distance to a value of 0.01 m. TODO: confirm
+units.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            r = SQR((difY ^ 2) + (difX ^ 2))
+            IF r &lt; .01 THEN r = .01</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>The magnitude of the acceleration caused to the second object by the first
+(both assumed to be point masses/spherically symmetric) is <code>G*m1/r^2</code> where
+m1 is the mass of the first object in the pair. <code>a</code> contains this value.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            a = G * P(B(0, i), 4) / (r ^ 2)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>Because <code>r * SIN(angle) = -difX</code> and <code>r * COS(angle) = -difY</code>,
+<code>(a * SIN(angle), a * COS(angle))</code> represents the acceleration vector of
+the second object of the pair towards the first.</p>
+<p>The second level indexes 1 and 2 of P appear to be the “net” acceleration.
+up to this point in the loop. TODO: confirm</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            P(B(1, i), 1) = P(B(1, i), 1) + (a * SIN(angle))
+            P(B(1, i), 2) = P(B(1, i), 2) + (a * COS(angle))</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>TODO: find out why these cases of “Hyperion” and “artificial objects”
+receive special handling.</p>
+<p>Pairs 79, 136, 195, 230 are respectively “Hyperion” and “Habitat “,
+“Hyperion” and “AYSE    “, “Hyperion” and “PROBE   “, and “Hyperion” and
+“unknown “</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF i = 79 OR i = 136 OR i = 195 OR i = 230 THEN GOSUB 166</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Pair 67 is “Mars    “ and “Habitat “. If the current pair is pair 67 and
+the distance between the two is less than 3,443,500 m (TODO: confirm units)
+perform special handling:</p>
+<p>Set <code>ELEVangle</code> to angle, execute sub <code>8500</code>, and let <code>MARSelev=h</code> and
+<code>r=r-h</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            if i = 67 and r&lt;3443500 then ELEVangle=angle: gosub 8500: MARSelev=h:r=r-h
+
+            'IF i = 79 THEN GOSUB 166</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>The following lines perform special handling for “Habitat “, “AYSE    “,
+and “PROBE   “.</p>
+<p>If the second element in the pair is not one of the above, jump to <code>2</code>
+below. TODO: complete.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF B(1, i) &lt;&gt; 28 AND B(1, i) &lt;&gt; 32 AND B(1, i) &lt;&gt; 38 THEN 2
             IF (SGN(difX) &lt;&gt; -1 * SGN(Vx(B(1, i)) - Vx(B(0, i)))) OR (SGN(difY) &lt;&gt; -1 * SGN(Vy(B(1, i)) - Vy(B(0, i)))) THEN 2
             Vhab = SQR((Vx(B(1, i)) - Vx(B(0, i))) ^ 2 + (Vy(B(1, i)) - Vy(B(0, i))) ^ 2)
-            IF r &lt; ts * Vhab THEN ts = (r - (P(B(0, i), 5) / 2)) / Vhab
+            IF r &lt; ts * Vhab THEN ts = (r - (P(B(0, i), 5) / 2)) / Vhab</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>The following performs extra special handling.</p>
 
-2           IF B(1, i) = 32 AND r &lt;= P(B(0, i), 5) + P(32, 5) THEN CONflag2 = 1: CONflag3 = B(0, i)': targ = 32
-            IF B(1, i) = 28 AND P(B(0, i), 10) &gt; -150 AND r &lt;= P(B(0, i), 5) + P(28, 5) THEN CONflag = 1: CONtarg = B(0, i): Dcon = r: Acon = angle: CONacc = a
-            IF B(1, i) = 28 AND B(0, i) &lt;&gt; 32 AND r &lt;= P(B(0, i), 5) + (1000 * P(B(0, i), 10)) THEN atm = B(0, i): Ratm = (r - P(B(0, i), 5)) / 1000
-            IF B(1, i) = 39 AND r &lt;= P(B(0, i), 5) + P(39, 5) THEN explCENTER = 39: GOSUB 6000
-            IF B(1, i) = 38 AND r &lt;= P(B(0, i), 5) + P(38, 5) THEN explCENTER = 38: GOSUB 6000
-            if (B(1, i) = 32 and B(0, i) = 15) and r&lt;1000000+P(15,5) then Px(15,3)=1e30: Py(15,3)= 1e30
-5           IF B(0, i) = targ AND B(1, i) = 28 THEN Atarg = angle: Dtarg = r: Acctarg = a
-6           IF B(0, i) = ref AND B(1, i) = 28 THEN Vref = SQR(G * P(B(0, i), 4) / r): Aref = angle: Dref = r
-            IF B(0, i) = Ltr THEN LtrA = a
-            IF i = 163 THEN AYSEdist = r
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>If the second object in the pair is “AYSE    “ and the distance between
+the (center of) the two objects is less than or equal to the sum of their
+radii, let <code>CONflag2=1</code> and <code>CONflag3=(the ID of the first object)</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-symbol">2 </span>          <span class="hljs-keyword">IF</span> B(<span class="hljs-number">1</span>, i) = <span class="hljs-number">32</span> <span class="hljs-keyword">AND</span> r &lt;= P(B(<span class="hljs-number">0</span>, i), <span class="hljs-number">5</span>) + P(<span class="hljs-number">32</span>, <span class="hljs-number">5</span>) <span class="hljs-keyword">THEN</span> CONflag2 = <span class="hljs-number">1</span>: CONflag3 = B(<span class="hljs-number">0</span>, i)<span class="hljs-comment">': targ = 32</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>If the second object in the pair is “Habitat “ and (TODO: fully understand)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF B(1, i) = 28 AND P(B(0, i), 10) &gt; -150 AND r &lt;= P(B(0, i), 5) + P(28, 5) THEN CONflag = 1: CONtarg = B(0, i): Dcon = r: Acon = angle: CONacc = a</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>If the second object in the pair is “Habitat “ and the first object in the
+pair is not “AYSE    “ and …
+Something to do with atmospheric simulation (TODO: fully understand)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF B(1, i) = 28 AND B(0, i) &lt;&gt; 32 AND r &lt;= P(B(0, i), 5) + (1000 * P(B(0, i), 10)) THEN atm = B(0, i): Ratm = (r - P(B(0, i), 5)) / 1000</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>If the second object in the pair is “unknown “ and the distance from the
+center of each is less than or equal to the sum of their radii (implying
+a collision of both objects are circular), set <code>explCENTER</code> (likely
+standing for “explosion center”) to 39 (the ID of “unknown “) and go to sub
+<code>6000</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF B(1, i) = 39 AND r &lt;= P(B(0, i), 5) + P(39, 5) THEN explCENTER = 39: GOSUB 6000</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>If the second object in the pair is “PROBE   “ and the distance from the
+center of each is less than or equal to the sum of their radii, set
+<code>explCENTER</code> to 38 (the ID of “PROBE   “) and go to sub <code>6000</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF B(1, i) = 38 AND r &lt;= P(B(0, i), 5) + P(38, 5) THEN explCENTER = 38: GOSUB 6000</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>If the pair is “Ganymede” first and “AYSE    “ second and the distance from center of
+“AYSE    “ and the center of “Ganymede” is less than the radius of
+“Ganymede” plus 1,000,000 m, (equivalently, “AYSE    “ is less than
+1,000,000 m from the surface of “Ganymede” (assumed to be a perfect circle,
+change the x position and y position of “Ganymede” to both be 1e30.
+Todo: understand why this exists</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            if (B(1, i) = 32 and B(0, i) = 15) and r&lt;1000000+P(15,5) then Px(15,3)=1e30: Py(15,3)= 1e30</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>Get the angle and distance to the center of the target, relative to
+“Habitat”, and the magnitude of the acceleration cause by the target on
+“Habitat”. Store in the variables <code>Atarg</code>, <code>Dtarg</code>, and <code>Acctarg</code>
+respectively. Do the above if the first object in the pair is the target
+object and the second is “Habitat “. The values have already been computed
+above.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-symbol">5 </span>          <span class="hljs-keyword">IF</span> B(<span class="hljs-number">0</span>, i) = targ <span class="hljs-keyword">AND</span> B(<span class="hljs-number">1</span>, i) = <span class="hljs-number">28</span> <span class="hljs-keyword">THEN</span> Atarg = angle: Dtarg = r: Acctarg = a</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>Calculate the theoretical speed of a circular orbit around the reference
+object relative to the reference object for the habitat at the current
+distance from the object’s center. This only considers the gravitational
+force of the the reference object and not other objects. This value is
+stored in <code>Vref</code>. The angle and distance to the center of the reference
+objects are stored in <code>Aref</code> and <code>Dref</code> respectively using the values
+computed above.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-symbol">6 </span>          <span class="hljs-keyword">IF</span> B(<span class="hljs-number">0</span>, i) = ref <span class="hljs-keyword">AND</span> B(<span class="hljs-number">1</span>, i) = <span class="hljs-number">28</span> <span class="hljs-keyword">THEN</span> Vref = <span class="hljs-keyword">SQR</span>(G * P(B(<span class="hljs-number">0</span>, i), <span class="hljs-number">4</span>) / r): Aref = angle: Dref = r</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>Get the angle to Ltr as calculated above (TODO: find what is Ltr) if the
+first object in the pair is Ltr and store it in the variable <code>LtrA</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF B(0, i) = Ltr THEN LtrA = a</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <p>Pair 163 is “AYSE    “ and “Habitat “. <code>AYSEdist</code> is the distance between
+“AYSE    “ and “Habitat “ in m. Store the distance between the center of
+the two in <code>AYSEdist</code>.</p>
+<p>Pair 166 is “OCESS   “ and “Habitat “. <code>OCESSdist</code> is the distance between
+“OCESS   “ and “Habitat “ in m. Store the distance between the center of
+the two in <code>OCESSdist</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF i = 163 THEN AYSEdist = r
             IF i = 166 THEN OCESSdist = r
-106     NEXT i
-        IF AYSEdist &gt; 320 THEN AYSE = 0
-        IF CONflag = 1 AND CONtarg = 12 THEN CONflag = .25
-        'IF CONflag = 1 AND CONtarg = 14 THEN 9111
+106     NEXT i</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <h2 id="end-of-calculation-of-acceleration-due-to-gravity">End of calculation of acceleration due to gravity</h2>
 
-        'Record old center position
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <p>If the center of “AYSE    “ is more than 320 m from the center of
+“Habitat “, let <code>AYSE=0</code>. (TODO: find out what <code>AYSE</code> is)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        IF AYSEdist &gt; 320 THEN AYSE = 0</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <p>(TODO: find the meaning of the below)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        IF CONflag = 1 AND CONtarg = 12 THEN CONflag = .25
+        'IF CONflag = 1 AND CONtarg = 14 THEN 9111</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <p>Record the old (before position update in each step) position of the center
+of the center object in <code>cenX</code> and <code>cenY</code>.
+TODO: find what cenXoff and cenYoff do.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        'Record old center position
 101     cenX = Px(cen, 3) + cenXoff
         cenY = Py(cen, 3) + cenYoff
 
@@ -674,40 +1130,299 @@ to 0. TODO: Find why not 36, 37, and 40.</p>
         IF DISPflag = 0 THEN LINE (30, 120)-(30 + (5 * SIN(Sangle)), 120 + (5 * COS(Sangle))), 0
         IF DISPflag = 0 THEN LINE (30, 120)-(30 + (10 * SIN(Vvangle)), 120 + (10 * COS(Vvangle))), 0
         IF SQR(((Px(28, 3) - cenX) * mag / AU) ^ 2 + ((Py(28, 3) - cenY) * mag * 1 / AU) ^ 2) &gt; 400 THEN 132
-        IF vflag = 1 THEN LINE (300 + (Px(28, 3) - cenX) * mag / AU, 220 + (Py(28, 3) - cenY) * mag * 1 / AU)-(300 + (20 * SIN(Vvangle)) + (Px(28, 3) - cenX) * mag / AU, 220 + (20 * COS(Vvangle)) + (Py(28, 3) - cenY) * mag * 1 / AU), 0
+        IF vflag = 1 THEN LINE (300 + (Px(28, 3) - cenX) * mag / AU, 220 + (Py(28, 3) - cenY) * mag * 1 / AU)-(300 + (20 * SIN(Vvangle)) + (Px(28, 3) - cenX) * mag / AU, 220 + (20 * COS(Vvangle)) + (Py(28, 3) - cenY) * mag * 1 / AU), 0</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <p>Update the velocity of each object based on the acceleration calculated
+above. “cover” the previous object by drawing a black version of itself over
+it.</p>
+<p>Iterate every object from 37 (or different depending on <code>ufo1</code> and <code>ufo2</code>,
+TODO: clarify) to 0 in descending order.</p>
+<p><code>GOTO 108</code> is used like “continue”. <code>108</code> is the <code>NEXT i</code> statement at the
+bottom of the loop.</p>
 
-        'Update object velocities and erase old positions
-132     FOR i = 37 + ufo1 + ufo2 TO 0 STEP -1
-            IF i = 28 THEN GOSUB 301
-            IF i = 38 THEN GOSUB 7200
-            VxDEL = Vx(i) + (P(i, 1) * OLDts)
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        'Update object velocities and erase old positions
+132     FOR i = 37 + ufo1 + ufo2 TO 0 STEP -1</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <p>Special handling for “Habitat “ and “PROBE   “. If the current object is
+“Habitat “, go to sub <code>301</code>. If it is “PROBE   “, go to sub <code>7200</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF i = 28 THEN GOSUB 301
+            IF i = 38 THEN GOSUB 7200</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <p>Update velocity by adding to the original velocity the acceleration times
+the old timestep (TODO: find out why old timestep). If the new value is
+greater than 299999999.999 m/s (incidentally close to the speed of light),
+the velocity is not updated by skipping the parts that update the velocity
+to the new value.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            VxDEL = Vx(i) + (P(i, 1) * OLDts)
             VyDEL = Vy(i) + (P(i, 2) * OLDts)
             IF SQR(VxDEL ^ 2 + VyDEL ^ 2) &gt; 299999999.999# THEN 117
             Vx(i) = VxDEL
-            Vy(i) = VyDEL
-117         IF i = 36 AND MODULEflag = 0 THEN 108
-            if i=4 then 11811
-            IF SQR(((Px(i, 3) - cenX) * mag / AU) ^ 2 + ((Py(i, 3) - cenY) * mag * 1 / AU) ^ 2) - (P(i, 5) * mag / AU) &gt; 400 THEN 108
-11811       IF cen * tr &gt; 0 THEN 108
-            IF mag * P(i, 5) / AU &lt; 1.1 THEN CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag / AU), 1, 8 * trail: GOTO 108
-            clr = 8 * trail
-            IF i = 28 THEN vnSa = oldSa: GOSUB 128: GOTO 108
+            Vy(i) = VyDEL</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              <p>“Continue” if the current object is “Module  “ and <code>MODULEflag</code> is 0.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-symbol">117 </span>        <span class="hljs-keyword">IF</span> i = <span class="hljs-number">36</span> <span class="hljs-keyword">AND</span> MODULEflag = <span class="hljs-number">0</span> <span class="hljs-keyword">THEN</span> <span class="hljs-number">108</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <p>Special handling for “Mars    “. This means that “Mars    “ is drawn
+regardless of how far “out of frame” it is.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            if i=4 then 11811</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>If the distance of the center of the object to the display center in pixels
+(taking into account the magnification setting) minus the radius of the
+object in pixels is greater than 400 (pixels), “continue” (do not draw the
+object). This prevents the drawing of some objects that cannot be seen on
+the display.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF SQR(((Px(i, 3) - cenX) * mag / AU) ^ 2 + ((Py(i, 3) - cenY) * mag * 1 / AU) ^ 2) - (P(i, 5) * mag / AU) &gt; 400 THEN 108</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>The condition of the following if statement is only true if <code>cen</code> and <code>tr</code>
+are both positive (this appears to be the only possible situation). This
+would imply that <code>tr</code> is 1 (“enabled”) and the center object is not
+“Sun     “. For unknown reasons, “continue” if this is the case.
+TODO: clarify.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-symbol">11811 </span>      <span class="hljs-keyword">IF</span> cen * tr &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">THEN</span> <span class="hljs-number">108</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <p>The center of the display for drawing purposes is located at (300, 220),
+not the geometric center of the display (320, 240).</p>
+<p>After velocity update but before position update, draw a circle in black
+(color 0) (to cover old circle drawn in the previous frame, TODO: confirm)
+if <code>trail</code> is 0, or dark gray (color 8) to leave a “trail” at the object’s
+previous position. <strong>INCORRECT</strong> TODO: fix</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF mag * P(i, 5) / AU &lt; 1.1 THEN CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag / AU), 1, 8 * trail: GOTO 108</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <p>Set <code>clr</code> (most likely standing for “color”, TODO: confirm) to 8 if <code>trail</code>
+is 1, and 0 if <code>trail</code> is 0.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            clr = 8 * trail</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p><code>vnSa</code> is the angle of the habitat in radians, according to the
+convention of . Go to sub <code>128</code> to either “blank” the drawing of
+“Habitat “ using black or to leave a “trail” using dark gray, depending on
+<code>trail</code>. “Continue” afterwards. The same process is done for “ISS     “,
+“OCESS   “, and “AYSE    “. These each have their custom draw procedure.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF i = 28 THEN vnSa = oldSa: GOSUB 128: GOTO 108
             IF i = 35 THEN GOSUB 138: GOTO 108
             IF i = 37 THEN GOSUB 148: GOTO 108
             IF i = 32 THEN clrMASK = 0: GOSUB 158: GOTO 108
-            IF i = 12 AND HPdisp = 1 THEN 108
-            if P(i,5)*mag/AU&gt;300 then 118
-            CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, 8 * trail: GOTO 108
+            IF i = 12 AND HPdisp = 1 THEN 108</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <p>Jump to <code>118</code> to perform special drawing if the radius of the current object
+in display pixels is greater than 300.</p>
 
-118         difX = cenX-Px(i, 3)
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            if P(i,5)*mag/AU&gt;300 then 118</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p>If no special handling is needed, draw a circle with color black or dark gray
+depending on <code>trail</code> to “cover” the old circle or to leave a “trail”.</p>
+<p><code>(Px(i, 3) - cenX) * mag / AU</code> and <code>(Py(i, 3) - cenY) * mag * 1 / AU)</code> are
+respectively the x and y positions of the current object relative to the
+current center, converted into display pixels with regard to the current
+magnification level. These screen coordinates are offset so that the center
+corresponds to the screen position (300, 220). <code>mag * P(i, 5) / AU</code> is the
+radius of the current object, converted into display pixels. “Continue” after
+drawing this circle.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, 8 * trail: GOTO 108</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <p><code>difX</code> and <code>difY</code> represent the distance from the display center to the
+center of the current object, in m. <code>dist</code> is the distance of the center of
+the object to the display center in pixels minus the radius of the object
+in pixels. Go to sub <code>5000</code> to calculate an “atan2”, with the result in
+<code>angle</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>118         difX = cenX-Px(i, 3)
             difY = cenY-Py(i, 3)
             dist = (SQR((difY ^ 2) + (difX ^ 2)) - P(i, 5)) * mag / AU
-            GOSUB 5000
+            GOSUB 5000</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <p>Convert <code>angle</code> from radians to degrees and multiply the result by 160,
+then round the angle and then convert it back to radians.</p>
+<p>The two lines have the effect of rounding the angle to 160ths of a degree.</p>
+<p><code>fix</code> is like <code>trunc</code> in some other languages. The function truncates the
+digits after the decimal point, irrespective of sign. For positive values
+of <code>x</code>, <code>fix(x + 0.5)</code> is equivalent to <code>round(x)</code>.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            angle = angle * rad*160   '32
+            angle=fix(angle+.5)/rad/160  '32</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p><code>P(i, 5) * pi2</code> is the circumference of the current object (assuming a
+perfect circle). This is converted to display pixel units by multiplying by
+<code>mag/AU</code>, which takes into account the current magnification. The value
+computed is the circumference of the current object in display pixels. The
+computation is mathematically equivalent to <code>400 / (P(i,5) * mag / AU</code>.
+TODO: this is very confusing. Understand</p>
 
-            angle = angle * rad*160   '32
-            angle=fix(angle+.5)/rad/160  '32
-            arcANGLE = pi * 800/ (P(i,5)*pi2*mag/AU)
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            arcANGLE = pi * 800/ (P(i,5)*pi2*mag/AU)
             if arcANGLE&gt;pi then arcANGLE=pi
             stepANGLE=arcANGLE/90
             stepANGLE=RAD*160*arcANGLE/90
@@ -732,9 +1447,23 @@ to 0. TODO: Find why not 36, 37, and 40.</p>
 
 
 108     NEXT i
-        GOTO 102
+        GOTO 102</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-73">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <p>Draw “Habitat “, a structure consisting of one large circle and three
+smaller circles on one side.</p>
 
-            'Paint Habitat
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            'Paint Habitat
 128         CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, clr
             CIRCLE (300 + (Px(i, 3) - cenX - (P(i, 5) * .8 * SIN(vnSa))) * mag / AU, 220 + (Py(i, 3) - cenY - (P(i, 5) * .8 * COS(vnSa))) * mag * 1 / AU), mag * P(i, 5) * .2 / AU, clr
             CIRCLE (300 + (Px(i, 3) - cenX - (P(i, 5) * 1.2 * SIN(vnSa + .84))) * mag / AU, 220 + (Py(i, 3) - cenY - (P(i, 5) * 1.2 * COS(vnSa + .84))) * mag * 1 / AU), mag * P(i, 5) * .2 / AU, clr
@@ -876,7 +1605,6 @@ to 0. TODO: Find why not 36, 37, and 40.</p>
 168     IF i = 79 AND targ = 12 THEN Dtarg = rD: RcritL = P(12, 5) - PH5prime: Atarg = AtargPRIME: Acctarg = a
         RETURN 106
 
-
         'Detect contact with an object
 102     IF CONflag = 0 THEN 112
         MATCHaacc=0
@@ -897,9 +1625,6 @@ to 0. TODO: Find why not 36, 37, and 40.</p>
         Px(28, 3) = Px(CONtarg, 3) + ((P(CONtarg, 5) + P(28, 5) - .1 + ALTdel) * SIN(Acon + 3.1415926#))
         Py(28, 3) = Py(CONtarg, 3) + ((P(CONtarg, 5) + P(28, 5) - .1 + ALTdel) * COS(Acon + 3.1415926#))
         explFLAG1 = 1
-
-
-
 
         'Docked with AYSE drive module
 112     explFLAG2 = 0
@@ -1367,23 +2092,68 @@ to 0. TODO: Find why not 36, 37, and 40.</p>
 
 
         'SUBROUTINE print control variable names to screen
-405     CLS
-        HPdisp = 0
-400     IF mag &lt; .1 THEN GOSUB 8000
-        IF ts &lt; .015625 THEN ts = .015626:TSindex=1
-        IF ts &gt; 60 THEN ts = 60:TSindex=17
-        IF Dfuel &gt; 2 THEN Dfuel = 0
+405     CLS</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <p><code>HPdisp</code> (possibly standing for “Hyperion display”) appears to be a
+variable controlling the drawing of “Hyperion”. TODO: confirm.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        HPdisp = 0
+400     IF mag &lt; .1 THEN GOSUB 8000</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p>Clamp the minimum and maximum <code>ts</code> to 0.015625 and 60 respectively and
+update <code>TSindex</code> to be either the smallest or largest one if <code>ts</code> is out
+of bounds.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        IF ts &lt; .015625 THEN ts = .015626:TSindex=1
+        IF ts &gt; 60 THEN ts = 60:TSindex=17</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p>TODO: understand.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        IF Dfuel &gt; 2 THEN Dfuel = 0
         IF ufo2 = 1 THEN ts = .25: TSindex=5
         COLOR 8</pre></div></div>
             
         </li>
         
         
-        <li id="section-32">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p>Indexes <code>1-214</code> of <code>panel</code> are used to draw the box of the “panel” at the
 left side of the display in the main flight screen.</p>
@@ -1396,13 +2166,58 @@ left side of the display in the main flight screen.</p>
             IF dte = 0 AND j = 168 THEN 403
         NEXT j
 
-403     COLOR 7
-        IF Ztel(1) = 1 THEN Sflag = 1
-        LOCATE 2, 2: PRINT "ref Vo   ";
+403     COLOR 7</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
+              </div>
+              <p>TODO: understand</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        IF Ztel(1) = 1 THEN Sflag = 1</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-79">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-79">&#182;</a>
+              </div>
+              <p>Output labels</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        LOCATE 2, 2: PRINT "ref Vo   ";
         LOCATE 3, 2: PRINT "V hab-ref";
         LOCATE 4, 2: PRINT "Vtarg-ref";
-        COLOR 7
-        LOCATE 5, 2: PRINT "Engine"; : LOCATE 5, 16: COLOR 8 + (7 * ENGsetFLAG): PRINT USING "####.#_ "; eng;
+
+        COLOR 7</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-80">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-80">&#182;</a>
+              </div>
+              <p>Output engine throttle label and engine throttle setting in dark gray if
+<code>ENGsetFLAG</code> is 0 and light gray if it is 1, using the format string
+<code>&quot;####.#_ &quot;</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        LOCATE 5, 2: PRINT "Engine"; : LOCATE 5, 16: COLOR 8 + (7 * ENGsetFLAG): PRINT USING "####.#_ "; eng;
         COLOR 7 + (5 * Ztel(1))
         LOCATE 25, 2: PRINT "NAVmode";
         COLOR 14
@@ -1494,25 +2309,56 @@ left side of the display in the main flight screen.</p>
         IF ref + 1 &gt; 37 THEN ref = 36
         ref = ref + 1
         GOSUB 400
-        RETURN
+        RETURN</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-81">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-81">&#182;</a>
+              </div>
+              <p>Create a file loading prompt. Curiously, <code>&quot;Load File: &quot;</code> is output first
+at (10, 60), then followed by an input with a blank prompt.</p>
+<p>If the input is empty, jump to 703.</p>
+<p>If not, set <code>DEBUGflag</code> to 1 (TODO: find the use of <code>DEBUGflag</code>) and
+jump to 701 (the code for reading and loading saves).</p>
 
-
-        'SUBROUTINE Restore data from file
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        'SUBROUTINE Restore data from file
 700     LOCATE 10, 60: PRINT "Load File: "; : INPUT ; "", filename$
         IF filename$ = "" THEN 703
         DEBUGflag=1
-        goto 701
-702     LOCATE 10, 60: PRINT "                  ";
+        goto 701</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-82">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-82">&#182;</a>
+              </div>
+              <p>Cover any content on row 10 from column 60 to 77 (78-80 are not covered)
+and then jump to 700 to show a load file prompt.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>702     LOCATE 10, 60: PRINT "                  ";
         GOTO 700</pre></div></div>
             
         </li>
         
         
-        <li id="section-33">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <h2 id="start-of-data-file-reading">Start of data file reading</h2>
 <p>Open <code>$filename+&quot;.RND&quot;</code> in “read-only” mode with filenumber #1 and record
@@ -1532,11 +2378,11 @@ the file has less than 1427 bytes.</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <p>If the length of <code>inpSTR$</code> is not 1427, output <code>filename$;&quot; is unusable&quot; at
 (11,60) and jump to</code>702`</p>
@@ -1551,7 +2397,8 @@ jump to 702.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        if len(inpSTR$) &lt;&gt; 1427 then locate 11,60:print filename$;" is unusable";:goto 702
+            <div class="content"><div class='highlight'><pre>
+        if len(inpSTR$) &lt;&gt; 1427 then locate 11,60:print filename$;" is unusable";:goto 702
         chkCHAR1$=left$(inpSTR$,1)
         chkCHAR2$=right$(inpSTR$,1)
         ORBITversion$=mid$(inpSTR$, 2, 7)
@@ -1561,11 +2408,35 @@ jump to 702.</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
+              </div>
+              <p><strong>Summary</strong>; The initialization process is as follows. First a prompt is
+shown asking the user to enter a file name to open. If this file exists and
+is valid, the data is loaded in, and the program continues with this file.
+If nothing is entered, the program tries to load <code>OSBACKUP.RND</code> and
+continue with it. If an broken file is entered, or if the file entered does
+not exist (including the case where nothing is entered and <code>OSBACKUP.RND</code>
+is loaded by default), a different prompt will show up asking the user to
+enter a valid save file name. The prompt will not go away until a valid
+file is loaded. If nothing is entered at this prompt and the user simply
+presses <code>Enter</code>, a save file will not be loaded and a fresh simulation will
+be created based on data loaded from <code>starsr</code> at the beginning of the
+program.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-86">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p><code>k</code> serves as a sort of pointer for reading the <code>inpSTR$</code> data string. It
 starts from byte 17. TODO: find what bytes 9-16 are for.</p>
@@ -1582,11 +2453,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <ul>
 <li><code>eng</code>: <code>single</code>, bytes <code>17-20</code></li>
@@ -1599,11 +2470,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
               <ul>
 <li><code>vflag</code>: <code>integer</code>, bytes <code>21-22</code></li>
@@ -1616,11 +2487,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <ul>
 <li><code>Aflag</code>: <code>integer</code>, bytes <code>23-24</code></li>
@@ -1633,11 +2504,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <ul>
 <li><code>Sflag</code>: <code>integer</code>, bytes <code>25-26</code></li>
@@ -1650,11 +2521,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
               <ul>
 <li><code>Are</code>: <code>double</code>, bytes <code>27-34</code></li>
@@ -1667,11 +2538,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
               <ul>
 <li><code>mag</code>: <code>double</code>, bytes <code>35-42</code></li>
@@ -1684,11 +2555,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <ul>
 <li><code>Sangle</code>: <code>single</code>, bytes <code>43-46</code></li>
@@ -1701,11 +2572,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <ul>
 <li><code>cen</code>: <code>integer</code>, bytes <code>47-48</code></li>
@@ -1718,14 +2589,14 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <ul>
-<li><code>targ</code>: <code>integer</code>, bytes <code>49-50</code></li>
+<li><code>targ</code>: <code>integer</code>, bytes <code>49-50</code>. The ID of the target object.</li>
 </ul>
 
             </div>
@@ -1735,14 +2606,14 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <ul>
-<li><code>ref</code>: <code>integer</code>, bytes <code>51-52</code></li>
+<li><code>ref</code>: <code>integer</code>, bytes <code>51-52</code>. The ID of the reference object.</li>
 </ul>
 
             </div>
@@ -1752,11 +2623,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <ul>
 <li><code>trail</code>: <code>integer</code>, bytes <code>53-54</code></li>
@@ -1769,11 +2640,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-47">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <ul>
 <li><code>Cdh</code>: <code>single</code>, bytes <code>55-58</code></li>
@@ -1786,11 +2657,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-48">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <ul>
 <li><code>SRB</code>: <code>single</code>, bytes <code>59-62</code></li>
@@ -1803,14 +2674,18 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-49">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <ul>
-<li><code>tr</code>: <code>integer</code>, bytes <code>63-64</code></li>
+<li><code>tr</code>: <code>integer</code>, bytes <code>63-64</code>. As far as can be deduced from the
+executable, <code>tr</code> is a flag, that when set to 1, makes objects leave
+colored trails in their display color. Appears to override the effects
+of <code>trail</code>, which leaves gray traces (but may only be because <code>tr</code> is
+painted after <code>trail</code>, TODO: confirm).</li>
 </ul>
 
             </div>
@@ -1820,11 +2695,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-50">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <ul>
 <li><code>dte</code>: <code>integer</code>, bytes <code>65-66</code></li>
@@ -1837,11 +2712,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-51">
+        <li id="section-102">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <ul>
 <li><code>ts</code>: <code>double</code>, bytes <code>67-74</code></li>
@@ -1854,11 +2729,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-52">
+        <li id="section-103">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <ul>
 <li><code>OLDts</code>: <code>double</code>, bytes <code>75-82</code></li>
@@ -1871,11 +2746,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-53">
+        <li id="section-104">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <ul>
 <li><code>vernP!</code>: <code>single</code>, bytes <code>83-86</code></li>
@@ -1888,11 +2763,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-54">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <ul>
 <li><code>Eflag</code>: <code>integer</code>, bytes <code>87-88</code></li>
@@ -1905,11 +2780,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-55">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <ul>
 <li><code>year</code>: <code>integer</code>, bytes <code>89-90</code></li>
@@ -1922,11 +2797,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-56">
+        <li id="section-107">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
               <ul>
 <li><code>day</code>: <code>integer</code>, bytes <code>91-92</code></li>
@@ -1939,11 +2814,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-57">
+        <li id="section-108">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <ul>
 <li><code>hr</code>: <code>integer</code>, bytes <code>93-94</code></li>
@@ -1956,11 +2831,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-58">
+        <li id="section-109">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
               <ul>
 <li><code>min</code>: <code>integer</code>, bytes <code>95-96</code></li>
@@ -1973,11 +2848,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-59">
+        <li id="section-110">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
               <ul>
 <li><code>sec</code>: <code>double</code>, bytes <code>97-104</code></li>
@@ -1990,11 +2865,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-60">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <ul>
 <li><code>AYSEangle</code>: <code>single</code>, bytes <code>105-108</code></li>
@@ -2007,11 +2882,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-61">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <ul>
 <li><code>AYSEscrape</code>: <code>integer</code>, bytes <code>109-110</code></li>
@@ -2024,11 +2899,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-62">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <ul>
 <li><code>Ztel(15)</code>: <code>single</code>, bytes <code>111-114</code></li>
@@ -2041,11 +2916,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-63">
+        <li id="section-114">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
               <ul>
 <li><code>Ztel(16)</code>: <code>single</code>, bytes <code>115-118</code></li>
@@ -2058,11 +2933,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-64">
+        <li id="section-115">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
               <ul>
 <li><code>HABrotate</code>: <code>single</code>, bytes <code>119-122</code></li>
@@ -2075,11 +2950,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-65">
+        <li id="section-116">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
               <ul>
 <li><code>AYSE</code>: <code>integer</code>, bytes <code>123-124</code></li>
@@ -2092,11 +2967,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <ul>
 <li><code>Ztel(9)</code>: <code>single</code>, bytes <code>125-128</code></li>
@@ -2109,11 +2984,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-67">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <ul>
 <li><code>MODULEflag</code>: <code>integer</code>, bytes <code>129-130</code></li>
@@ -2126,14 +3001,15 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-68">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <ul>
-<li><code>AYSEdist</code>: <code>single</code>, bytes <code>131-134</code></li>
+<li><code>AYSEdist</code>: <code>single</code>, bytes <code>131-134</code>: Distance to “Habitat “ to
+“AYSE    “</li>
 </ul>
 
             </div>
@@ -2143,14 +3019,15 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-69">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <ul>
-<li><code>OCESSdist</code>: <code>single</code>, bytes <code>135-138</code></li>
+<li><code>OCESSdist</code>: <code>single</code>, bytes <code>135-138</code>: Distance from “Habitat “ to
+“OCESS   “</li>
 </ul>
 
             </div>
@@ -2160,11 +3037,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-70">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <ul>
 <li><code>explosion</code>: <code>integer</code>, bytes <code>139-140</code></li>
@@ -2177,11 +3054,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <ul>
 <li><code>explosion1</code>: <code>integer</code>, bytes <code>141-142</code></li>
@@ -2194,11 +3071,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-72">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <ul>
 <li><code>Ztel(1)</code>: <code>single</code>, bytes <code>143-146</code></li>
@@ -2211,11 +3088,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-73">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <ul>
 <li><code>Ztel(2)</code>: <code>single</code>, bytes <code>147-150</code></li>
@@ -2228,11 +3105,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-74">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <ul>
 <li><code>NAVmalf</code>: <code>long</code>, bytes <code>151-154</code></li>
@@ -2245,11 +3122,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-75">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <ul>
 <li><code>Ztel(14)</code>: <code>single</code>, bytes <code>155-158</code></li>
@@ -2262,11 +3139,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-76">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <ul>
 <li><code>LONGtarg</code>: <code>single</code>, bytes <code>159-162</code></li>
@@ -2279,11 +3156,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-77">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <ul>
 <li><code>Pr</code>: <code>single</code>, bytes <code>163-166</code></li>
@@ -2296,11 +3173,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-78">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <ul>
 <li><code>Agrav</code>: <code>single</code>, bytes <code>167-170</code></li>
@@ -2313,11 +3190,11 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-79">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <p>39 32-byte blocks of data are read into <code>Px</code>, <code>Py</code>, <code>Vx</code>, and <code>Vy</code>,
 beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
@@ -2336,11 +3213,11 @@ beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
         </li>
         
         
-        <li id="section-80">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <p>Two more variables are read:</p>
 
@@ -2349,14 +3226,14 @@ beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
         </li>
         
         
-        <li id="section-81">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <ul>
-<li><code>fuel</code>: <code>single</code>, bytes <code>1419-1422</code></li>
+<li><code>fuel</code>: <code>single</code>, bytes <code>1419-1422</code>. The amount of fuel in the Habitat</li>
 </ul>
 
             </div>
@@ -2366,11 +3243,11 @@ beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
         </li>
         
         
-        <li id="section-82">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <ul>
 <li><code>AYSEfuel</code>: <code>single</code>, bytes <code>1423-1426</code></li>
@@ -2383,11 +3260,11 @@ beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
         </li>
         
         
-        <li id="section-83">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p>The last byte (byte 1427) is a check byte (<code>chkCHAR2$</code>, see above) and is
 not used.</p>
@@ -2398,11 +3275,11 @@ not used.</p>
         </li>
         
         
-        <li id="section-84">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
               <h2 id="data-processing-after-reading-file-">Data processing after reading file.</h2>
 
@@ -2411,11 +3288,11 @@ not used.</p>
         </li>
         
         
-        <li id="section-85">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <p>Reset <code>TSindex</code> to 5. Find the index in <code>TSflagVECTOR</code> with a value
 matching that of <code>ts</code> in the data file loaded and set <code>TSindex</code> to that
@@ -2431,27 +3308,89 @@ index. If no match is found, <code>TSindex</code> remains at 5.</p>
         </li>
         
         
-        <li id="section-86">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-137">&#182;</a>
+              </div>
+              <p>“OCESS   “ is placed in a special hard-coded location relative to
+“Earth   “. Upon file load, it is always placed about 6,288,118 m from the
+center of Earth in the direction 45deg clockwise of right relative to the
+center of “Earth   “. This code puts “OCESS   “ at this fixed offset from
+the center of “Earth   “ and matches its velocity with that of “Earth   “.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-symbol">713 </span>    Px(<span class="hljs-number">37</span>, <span class="hljs-number">3</span>) = <span class="hljs-number">4446370.8284487#</span> + Px(<span class="hljs-number">3</span>, <span class="hljs-number">3</span>): Py(<span class="hljs-number">37</span>, <span class="hljs-number">3</span>) = <span class="hljs-number">4446370.8284487#</span> + Py(<span class="hljs-number">3</span>, <span class="hljs-number">3</span>): Vx(<span class="hljs-number">37</span>) = Vx(<span class="hljs-number">3</span>): Vy(<span class="hljs-number">37</span>) = Vy(<span class="hljs-number">3</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-138">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-138">&#182;</a>
+              </div>
+              <p>Zero out the position, velocity, and “cumulative net acceleration” of
+“PROBE   “ (ID 38) and “unknown “ (ID 39). (TODO: find why this is needed)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        Px(38, 3) = 0: Py(38, 3) = 0: Vx(38) = 0: Vy(38) = 0: P(38, 1) = 0: P(38, 2) = 0
+        Px(39, 3) = 0: Py(39, 3) = 0: Vx(39) = 0: Vy(39) = 0: P(39, 1) = 0: P(39, 2) = 0</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-139">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-139">&#182;</a>
               </div>
               <p>TODO: understand</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>713     Px(37, 3) = 4446370.8284487# + Px(3, 3): Py(37, 3) = 4446370.8284487# + Py(3, 3): Vx(37) = Vx(3): Vy(37) = Vy(3)
-        Px(38, 3) = 0: Py(38, 3) = 0: Vx(38) = 0: Vy(38) = 0: P(38, 1) = 0: P(38, 2) = 0
-        Px(39, 3) = 0: Py(39, 3) = 0: Vx(39) = 0: Vy(39) = 0: P(39, 1) = 0: P(39, 2) = 0
-        tttt = TIMER + ts
+            <div class="content"><div class='highlight'><pre>        tttt = TIMER + ts
         ufo1 = 0
         ufo2 = 0
         cenXoff = 0
-        cenYoff = 0
-        cenX = Px(cen, 3)
-        cenY = Py(cen, 3)
-703     explosion = 0
+        cenYoff = 0</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-140">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-140">&#182;</a>
+              </div>
+              <p>The x and y coordinates of the center object are assigned to <code>cenX</code> and
+<code>cenY</code> (likely standing for “center x” and “center y”)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        cenX = Px(cen, 3)
+        cenY = Py(cen, 3)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-141">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-141">&#182;</a>
+              </div>
+              <p>TODO: understand</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>703     explosion = 0
         explosion1 = 0
         GOSUB 405
         RETURN
@@ -2632,19 +3571,30 @@ index. If no match is found, <code>TSindex</code> remains at 5.</p>
 815     IF Ztel(23) &lt; 38 AND ufo2 = 0 AND ufo1 = 1 THEN GOSUB 7100
         IF Ztel(23) = 39 AND ufo2 = 1 THEN explCENTER = 39: GOSUB 6000
 812     COLOR 15
-        RETURN
+        RETURN</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-142">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-142">&#182;</a>
+              </div>
+              <p>Subroutine for exioting the  program. Create an input with prompt
+<code>End Program</code> at (10, 60). If the  input is <code>y</code> (case-insensitive), end
+the program. Otherwise, cover the prompt and any input with spaces (the
+last two characters on the right side are not covered due to there only
+being 19 spaces in the “cover” string and not 21) and return.</p>
 
-
-        'Confirm end program
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        'Confirm end program
 900     LOCATE 10, 60: INPUT ; "End Program "; z$
         IF UCASE$(z$) = "Y" THEN END
         LOCATE 10, 60: PRINT "                   ";
         RETURN
-
-        'Name and author
-'910     LOCATE 2, 60: PRINT "OCESS Orbit 5 T  ";
-        'LOCATE 3, 60: PRINT CHR$(74); CHR$(97); CHR$(109); CHR$(101); CHR$(115); " "; CHR$(77); CHR$(97); CHR$(103); CHR$(119); CHR$(111); CHR$(111); CHR$(100);
-        'RETURN
 
         'Orbit Projection
 3000    GOSUB 3005
@@ -2815,10 +3765,30 @@ index. If no match is found, <code>TSindex</code> remains at 5.</p>
         Vx(36) = Vx(MODULEflag)
         Vy(36) = Vy(MODULEflag)
 
-3299    RETURN
+3299    RETURN</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-143">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-143">&#182;</a>
+              </div>
+              <p>An implementation of something similar to <code>atan2</code>. Calculates the angle
+from the first object in a pair to the second based on <code>difX</code> and <code>difY</code>.</p>
+<p>The resulting angle is the angle (counterclockwise) of the second object
+relative to the first, in radians, with the negative y direction (upward on
+the display, TODO: confirm) being the direction for which the angle equals</p>
+<ol start="0">
+<li>The value of <code>angle</code> is in the interval [0, 2pi).</li>
+</ol>
+<p>If <code>difX</code> and <code>difY</code> are both 0, the resulting <code>angle</code> is 1.5 pi.</p>
 
-
-
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
 5000    IF difY = 0 THEN IF difX &lt; 0 THEN angle = .5 * 3.1415926535# ELSE angle = 1.5 * 3.1415926535# ELSE angle = ATN(difX / difY)
         IF difY &gt; 0 THEN angle = angle + 3.1415926535#
         IF difX &gt; 0 AND difY &lt; 0 THEN angle = angle + 6.283185307#
@@ -2898,9 +3868,22 @@ index. If no match is found, <code>TSindex</code> remains at 5.</p>
         IF Ztel(21) = 2 THEN angle = angle + (180 / RAD)
         Vx(38) = Vx(38) + (Ztel(22) * ts * SIN(angle))
         Vy(38) = Vy(38) + (Ztel(22) * ts * COS(angle))
-        RETURN
+        RETURN</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-144">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-144">&#182;</a>
+              </div>
+              <p>Draw the background stars. TODO: confirm and elaborate</p>
 
-8000    FOR i = 1 TO 3021
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>8000    FOR i = 1 TO 3021
             IF ABS(300 + (Pz(i, 1) - cenX) * mag / AU) &gt; 1000 THEN 8001
             IF ABS(220 + (Pz(i, 2) - cenY) * mag / AU) &gt; 1000 THEN 8001
             PSET (300 + (Pz(i, 1) - cenX) * mag / AU, 220 + (Pz(i, 2) - cenY) * mag * 1 / AU), Pz(i, 0)
@@ -2961,14 +3944,62 @@ index. If no match is found, <code>TSindex</code> remains at 5.</p>
                         h=h+(h2*(LATdel)*(1-LNGdel))
                         h=h+(h3*(1-LATdel)*(LNGdel))
                         h=h+(h4*(LATdel)*(LNGdel))
-                return
+                return</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-145">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-145">&#182;</a>
+              </div>
+              <p>Error handler. Output at (1, 30) <code>&#39;stars&#39; file is missing or incomplete</code> if
+the line number of the line where the error occurred (the 1-based source
+code line number, not the BASIC “label” line number) is 91.</p>
+<p>The line number of the line where <code>starsr</code> is first opened in the
+un-annotated version of this file is line 8 (but it does have a “label” for
+91) (note that the source line  number has shifted due to the extra
+annotations), so even if <code>starsr</code> fails to open, this message is not shown
+(likely unintended behavior).</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>9000    LOCATE 1, 30
+        IF ERL = 91 THEN CLOSE #1: CLS : PRINT "'stars' file is missing or incomplete"</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-146">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-146">&#182;</a>
+              </div>
+              <p>Output the error number and error line number (as described above).</p>
 
-9000    LOCATE 1, 30
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        PRINT ERR, ERL</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-147">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-147">&#182;</a>
+              </div>
+              <p>The <code>INPUT$(1)</code> reads 1 character from the console (blocking). This is used
+to implement a sort of “press any key to continue.” After any key is
+is pressed, the program ends.</p>
 
-        IF ERL = 91 THEN CLOSE #1: CLS : PRINT "'stars' file is missing or incomplete"
-        PRINT ERR, ERL
-        z$ = INPUT$(1)
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        z$ = INPUT$(1)
         END
 
 
