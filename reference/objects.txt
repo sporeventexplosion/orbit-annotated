@@ -43,6 +43,58 @@ with the number on each line indicating its index.
 38  "PROBE   "
 39  "unknown "
 
+These are the properties of each object as stored in `starsr`, which is stored
+in parts of the `P` variable in `orbit5v.bas`. The names at the beginning are
+for reference only and do not exist in the source file. The columns are in order
+paint color (out of the 16 palette options), mass in kg, radius in m, (unknown),
+(unknown), (unknown). They correspond to the first indexes 0, 4, 5, 8, 9, and 10
+of `P` respectively.
+
+Some of these values are not consistent with scientific data.
+
+TODO: understand the unknown columns.
+
+"Sun     ", 14,     1.989000014062259e+30,  696000000,  1000,       161,    12234
+"Mercury ", 2,      3.319999962389971e+23,  2439000,    0.00001,    3.45,   199
+"Venus   ", 3,      4.869999810916809e+24,  6052000,    66.2,       5.6,    411
+"Earth   ", 4,      5.9799997772894e+24,    6288000,    1.28,       7.5,    465
+"Mars    ", 5,      6.420000163846805e+23,  3393500,    0.02,       10.7,   698
+"Jupiter ", 6,      1.900000029770777e+27,  71900000,   500,        22.45,  1691
+"Saturn  ", 7,      5.690000035562998e+26,  60330000,   550,        21.45,  1618
+"Uranus  ", 9,      8.690000111695927e+25,  26145000,   600,        20.45,  1544
+"Neptune ", 10,     1.029999965264717e+26,  24750000,   650,        20.45,  1546
+"Pluto   ", 11,     1.100000043155588e+22,  1500000,    0.014,      3.45,   224
+"Moon    ", 4,      6.597192853721021e+22,  1738000,    0,          1,     -100
+"Phoebe  ", 7,      8.292332e+18,           106700,     0,          1,     -100
+"Hyperion", 7,      5.6199e18,              135000,     0.0004,     1.1,    65
+"Io      ", 6,      8.930000398183065e+22,  1820000,    0.0034,     3.01,   184
+"Europa  ", 6,      4.940000021730721e+22,  1500000,    0.0024,     3.11,   190
+"Ganymede", 6,      1.481999971958417e+23,  2640000,    0.0044,     3.31,   204
+"Callisto", 6,      1.064000031265693e+23,  2500000,    0.0001,     2.31,   133
+"Enceldus", 7,      7.397000092244079e+20,  530000,     0,          1,     -100
+"Dione   ", 7,      1.052650006579155e+21,  560000,     0,          1,     -100
+"Rhea    ", 7,      2.503599931701363e+21,  765000,     0,          1,     -100
+"Titan   ", 7,      1.342840048990234e+23,  2560000,    7.132,      5.4,    380
+"Iapatus ", 7,      1.877699948776023e+21,  730000,     0,          1,     -100
+"Thethys ", 7,      6.175e+20,              531000,     0,          1,     -100
+"Mimas   ", 7,      3.7493e+19,             198200,     0,          1,     -100
+"Titania ", 9,      6.433981747200001e+21,  800000,     0,          1,     -100
+"Oberon  ", 9,      6.802721472104776e+21,  815000,     0,          1,     -100
+"Triton  ", 10,     6.17385787578e+22,      1700000,    0.0001,     2.81,   168
+"Charon  ", 11,     1.19599992524438e+21,   1300000,    0,          1,     -100
+"Habitat ", 12,     0,                      80,         0,          1,      0
+"Ceres   ", 13,     9.999999843067494e+16,  20000,      0,          1,     -100
+"DAWN    ", 12,     5000,                   5,          0,          1,     -100
+"Vesta   ", 13,     1000000,                480000,     0,          1,     -100
+"AYSE    ", 12,     0,                      500,        0,          1,     -200
+"Cassini ", 12,     6000,                   6,          0,          1,     -100
+"C 103P H", 13,     2.7457056248206e+11,    1710,       0,          1,     -100
+"ISS     ", 12,     0,                      500,        0,          1,     -100
+"Module  ", 12,     0,                      70,         0,          1,     -200
+"OCESS   ", 12,     0,                      50,         0,          1,     -100
+"PROBE   ", 12,     0,                      5,          0,          1,     -100
+"unknown ", 13,     0,                      100,        0,          1,     -100
+
 These are the pairs of objects with gravitational interaction in the order as
 stored in the `B` variable in `orbit5v.bas`.
 
@@ -287,3 +339,4 @@ stored in the `B` variable in `orbit5v.bas`.
 239 "Vesta   ", "unknown "
 240 "C 103P H", "unknown "
 241 "Thethys ", "unknown "
+
