@@ -29,9 +29,16 @@
               </div>
               <p>This is my (n+1)th attempt at annotating the Orbit5V source code. Hopefully
 have slightly better luck this time.</p>
-<p>The original code is retained besides some modifications to whitespace to
-clarify code indentation. Some originally commented lines and unreferenced
-labels have been removed.</p>
+<p>Most original code is retained in this annotated version, besides the
+following:</p>
+<ul>
+<li>modifications to whitespace to clarify code indentation. All indentation
+(most original indentation is 1 space) has been converted to 4 spaces.</li>
+<li>All keywords and commands have been converted to uppercase.</li>
+<li>Some commented lines and unreferenced labels have been removed.
+Note that uncommented unreachable code and code without any effect is kept
+and is labeled as such.</li>
+</ul>
 
             </div>
             
@@ -394,7 +401,7 @@ length 2.</p>
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p><code>ENGsetFLAG</code> indicates whether the engine is on (1) or not on (0). The
-default value, set below, is <code>1</code>, or “on”</p>
+default value, set below, is <code>1</code>, or “on”. TODO: confirm</p>
 
             </div>
             
@@ -410,7 +417,7 @@ default value, set below, is <code>1</code>, or “on”</p>
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p><code>mag</code> controls the magnification factor of the main display. Its effective
-unit can be understood to be pixels/AU. It is the length in display pixels
+unit can be understood to be pixels/AU. It is the length in pixels
 of a 1 astronomical unit line. The default value, set below, is <code>25</code>, for
 25 pixels per AU.</p>
 
@@ -548,14 +555,14 @@ cases, jump to <code>52</code>. If <code>z$</code> is <code>&quot;RESTART&quot;<
             
             <div class="content"><div class='highlight'><pre>        'load situation file
         OPEN "I", #1, "orbitstr.txt"
-        if EOF(1) then z$="": close #1: goto 51
+        IF EOF(1) THEN z$="": CLOSE #1: GOTO 51
         INPUT #1, z$
-        if z$="normal" then z$=""
+        IF z$="normal" THEN z$=""
         CLOSE #1
-        open "O", #1, "orbitstr.txt"
-        if z$="RESTART" then print #1, "OSBACKUP"
-        close #1
-        if z$&lt;&gt;"" then 52</pre></div></div>
+        OPEN "O", #1, "orbitstr.txt"
+        IF z$="RESTART" THEN PRINT #1, "OSBACKUP"
+        CLOSE #1
+        IF z$&lt;&gt;"" THEN 52</pre></div></div>
             
         </li>
         
@@ -577,11 +584,11 @@ to <code>52</code> if input is <code>&quot;y&quot;</code> (case-insensitive) or 
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>51      locate 5,5
+            <div class="content"><div class='highlight'><pre>51      LOCATE 5,5
         IF z$ = "" THEN INPUT ; "Restart previous state (or type filename)? ", y$
-        IF UCASE$(LEFT$(y$, 1)) = "Q" THEN end
-        IF UCASE$(LEFT$(y$, 1)) = "Y" THEN z$ = "OSBACKUP": goto 52
-        if y$ = "" then z$ = "OSBACKUP": goto 52
+        IF UCASE$(LEFT$(y$, 1)) = "Q" THEN END
+        IF UCASE$(LEFT$(y$, 1)) = "Y" THEN z$ = "OSBACKUP": GOTO 52
+        IF y$ = "" THEN z$ = "OSBACKUP": GOTO 52
         z$=y$</pre></div></div>
             
         </li>
@@ -597,7 +604,7 @@ to <code>52</code> if input is <code>&quot;y&quot;</code> (case-insensitive) or 
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        IF z$ = "" THEN end</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        IF z$ = "" THEN END</pre></div></div>
             
         </li>
         
@@ -742,8 +749,9 @@ of objects and store respectively in <code>difX</code> and <code>difY</code>.</p
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
-              <p>Calculates the angle from the first object to the second in radians. The
-result is in the variable <code>angle</code>.</p>
+              <p>Go to sub <code>5000</code>.</p>
+<p>Calculate the angle from the first object to the second in radians. The
+result is in the variable <code>angle</code>. See sub <code>5000</code> for detail.</p>
 
             </div>
             
@@ -840,7 +848,7 @@ perform special handling:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            if i = 67 and r&lt;3443500 then ELEVangle=angle: gosub 8500: MARSelev=h:r=r-h
+            <div class="content"><div class='highlight'><pre>            IF i = 67 AND r&lt;3443500 then ELEVangle=angle: gosub 8500: MARSelev=h:r=r-h
 
             'IF i = 79 THEN GOSUB 166</pre></div></div>
             
@@ -981,7 +989,7 @@ Todo: understand why this exists</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            if (B(1, i) = 32 and B(0, i) = 15) and r&lt;1000000+P(15,5) then Px(15,3)=1e30: Py(15,3)= 1e30</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            IF (B(1, i) = 32 and B(0, i) = 15) AND r&lt;1000000+P(15,5) THEN Px(15,3)=1e30: Py(15,3)= 1e30</pre></div></div>
             
         </li>
         
@@ -1116,7 +1124,7 @@ the two in <code>OCESSdist</code>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
-              <p>Record the old (before position update in each step) position of the center
+              <p>Record the old (before position update for each step) position of the center
 of the center object in <code>cenX</code> and <code>cenY</code>.
 TODO: find what cenXoff and cenYoff do.</p>
 
@@ -1142,8 +1150,8 @@ TODO: find what cenXoff and cenYoff do.</p>
                 <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>Update the velocity of each object based on the acceleration calculated
-above. “cover” the previous object by drawing a black version of itself over
-it.</p>
+above. “overwrite” the previous object by drawing a black version of itself
+on its old position.</p>
 <p>Iterate every object from 37 (or different depending on <code>ufo1</code> and <code>ufo2</code>,
 TODO: clarify) to 0 in descending order.</p>
 <p><code>GOTO 108</code> is used like “continue”. <code>108</code> is the <code>NEXT i</code> statement at the
@@ -1223,7 +1231,7 @@ regardless of how far “out of frame” it is.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            if i=4 then 11811</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            IF i=4 then 11811</pre></div></div>
             
         </li>
         
@@ -1309,7 +1317,7 @@ is 1, and 0 if <code>trail</code> is 0.</p>
                 <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p><code>vnSa</code> is the angle of the habitat in radians, according to the
-convention of . Go to sub <code>128</code> to either “blank” the drawing of
+convention of sub <code>5000</code>. Go to sub <code>128</code> to either “blank” the drawing of
 “Habitat “ using black or to leave a “trail” using dark gray, depending on
 <code>trail</code>. “Continue” afterwards. The same process is done for “ISS     “,
 “OCESS   “, and “AYSE    “. These each have their custom draw procedure.</p>
@@ -1332,11 +1340,11 @@ convention of . Go to sub <code>128</code> to either “blank” the drawing of
                 <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>Jump to <code>118</code> to perform special drawing if the radius of the current object
-in display pixels is greater than 300.</p>
+in pixels is greater than 300.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            if P(i,5)*mag/AU&gt;300 then 118</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            IF P(i,5)*mag/AU&gt;300 THEN 118</pre></div></div>
             
         </li>
         
@@ -1351,10 +1359,10 @@ in display pixels is greater than 300.</p>
 depending on <code>trail</code> to “cover” the old circle or to leave a “trail”.</p>
 <p><code>(Px(i, 3) - cenX) * mag / AU</code> and <code>(Py(i, 3) - cenY) * mag * 1 / AU)</code> are
 respectively the x and y positions of the current object relative to the
-current center, converted into display pixels with regard to the current
+current center, converted into pixels with regard to the current
 magnification level. These screen coordinates are offset so that the center
 corresponds to the screen position (300, 220). <code>mag * P(i, 5) / AU</code> is the
-radius of the current object, converted into display pixels. “Continue” after
+radius of the current object, converted into pixels. “Continue” after
 drawing this circle.</p>
 
             </div>
@@ -1371,17 +1379,12 @@ drawing this circle.</p>
                 <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p><code>difX</code> and <code>difY</code> represent the distance from the display center to the
-center of the current object, in m. <code>dist</code> is the distance of the center of
-the object to the display center in pixels minus the radius of the object
-in pixels. Go to sub <code>5000</code> to calculate an “atan2”, with the result in
-<code>angle</code>.</p>
+center of the current object, in m.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>118         difX = cenX-Px(i, 3)
-            difY = cenY-Py(i, 3)
-            dist = (SQR((difY ^ 2) + (difX ^ 2)) - P(i, 5)) * mag / AU
-            GOSUB 5000</pre></div></div>
+            difY = cenY-Py(i, 3)</pre></div></div>
             
         </li>
         
@@ -1392,17 +1395,16 @@ in pixels. Go to sub <code>5000</code> to calculate an “atan2”, with the res
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
-              <p>Convert <code>angle</code> from radians to degrees and multiply the result by 160,
-then round the angle and then convert it back to radians.</p>
-<p>The two lines have the effect of rounding the angle to 160ths of a degree.</p>
-<p><code>fix</code> is like <code>trunc</code> in some other languages. The function truncates the
-digits after the decimal point, irrespective of sign. For positive values
-of <code>x</code>, <code>fix(x + 0.5)</code> is equivalent to <code>round(x)</code>.</p>
+              <p><code>dist</code> is the distance of the center of the object to the display center in
+pixels minus the radius of the object in pixels. For a circular object, this
+is effectively the distance from the display center to the surface of the
+object in pixels. This value is negative when the distance from the display
+center to the center of the current object is less than the object’s radius.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            angle = angle * rad*160   '32
-            angle=fix(angle+.5)/rad/160  '32</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+            dist = (SQR((difY ^ 2) + (difX ^ 2)) - P(i, 5)) * mag / AU</pre></div></div>
             
         </li>
         
@@ -1413,41 +1415,12 @@ of <code>x</code>, <code>fix(x + 0.5)</code> is equivalent to <code>round(x)</co
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
-              <p><code>P(i, 5) * pi2</code> is the circumference of the current object (assuming a
-perfect circle). This is converted to display pixel units by multiplying by
-<code>mag/AU</code>, which takes into account the current magnification. The value
-computed is the circumference of the current object in display pixels. The
-computation is mathematically equivalent to <code>400 / (P(i,5) * mag / AU</code>.
-TODO: this is very confusing. Understand</p>
+              <p>Go to sub <code>5000</code> to calculate the angle from the current object to the
+display center (see sub <code>5000</code> for angle convention).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            arcANGLE = pi * 800/ (P(i,5)*pi2*mag/AU)
-            if arcANGLE&gt;pi then arcANGLE=pi
-            stepANGLE=arcANGLE/90
-            stepANGLE=RAD*160*arcANGLE/90
-            stepANGLE=FIX(stepANGLE+1)/RAD/160
-            ii = angle-(90*stepANGLE)
-            if i&lt;&gt;4 then h=0: goto 1181
-            ELEVangle=ii:gosub 8500
-
-1181        CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
-            CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
-            pset (300+CirX,220+CirY),8*trail
-
-            startANGLE = angle - (90*stepANGLE)
-            stopANGLE = angle + (90*stepANGLE)
-            for ii = startANGLE to stopANGLE step stepANGLE
-                if i&lt;&gt;4 then h=0:goto 1182
-                ELEVangle=ii:gosub 8500
-1182            CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
-                CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
-                line -(300+CirX,220+CirY), 8*trail
-            next ii
-
-
-108     NEXT i
-        GOTO 102</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            GOSUB 5000</pre></div></div>
             
         </li>
         
@@ -1458,8 +1431,142 @@ TODO: this is very confusing. Understand</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
+              <p>Convert <code>angle</code> from radians to degrees and multiply the result by 160,
+round to the nearest integer, divide by 160, and then convert back to radians.</p>
+<p>The two lines have the effect of rounding the angle to (1/160)s of a degree.</p>
+<p><code>fix</code> is like <code>trunc</code> in some other languages. The function truncates the
+digits after the decimal point, irrespective of sign. For positive values
+of <code>x</code>, <code>fix(x + 0.5)</code> is equivalent to <code>round(x)</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            angle = angle * rad*160   '32
+            angle=FIX(angle+.5)/rad/160  '32</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <p>Set <code>arcANGLE</code> to 400 pixels divided by the radius of the current object in
+pixels.</p>
+<p><code>P(i, 5) * pi2</code> is the circumference of the current object (assuming a
+perfect circle). This is converted to pixel units by multiplying <code>mag/AU</code>,
+which takes into account the current magnification. The value computed is the
+circumference of the current object in pixels. The calculation is
+mathematically equivalent to <code>400 / (P(i,5) * mag / AU)</code>.</p>
+<p><code>arcANGLE</code> increases as object radius decreases. The maximum <code>arcANGLE</code> is pi
+ which is reached when the object display radius is less than about 127.3240
+pixels.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            arcANGLE = pi * 800/ (P(i,5)*pi2*mag/AU)
+            IF arcANGLE&gt;pi THEN arcANGLE=pi</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p>This line is apparently useless as <code>stepANGLE</code> is immediately overwritten in
+the next line without being used. <code>Let</code>stepANGLE<code>be 1/90 of</code>arcANGLE`.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            stepANGLE=arcANGLE/90</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p>These lines have the approximate effect of dividing <code>stepANGLE</code> by 90, but
+also increases it to the next largest multiple of 90 pi / (160 * 180).
+TODO: confirm calculations
+Let <code>stepANGLE</code> equal 160/90 of <code>arcANGLE</code> converted from radians to degrees.</p>
+<p>Let <code>stepANGLE</code> equal <code>stepANGLE + 1</code> truncated, then divided by the number
+of degrees in 1 radian and by 160.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            stepANGLE=RAD*160*arcANGLE/90
+            stepANGLE=FIX(stepANGLE+1)/RAD/160</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-77">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <p>Let ii equal <code>angle</code> (the angle from the current object to the display
+center) minus 90 times <code>stepANGLE</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            ii = angle-(90*stepANGLE)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
+              </div>
+              <p>If the current object is not “Mars    “, let <code>h = 0</code> and jump to <code>1181</code>.
+Otherwise, let <code>ELEVangle = ii</code> and go to sub <code>8500</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            IF i&lt;&gt;4 THEN h=0: goto 1181
+            ELEVangle=ii:gosub 8500
+
+1181        CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
+            CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
+            PSET (300+CirX,220+CirY),8*trail
+
+            startANGLE = angle - (90*stepANGLE)
+            stopANGLE = angle + (90*stepANGLE)
+            FOR ii = startANGLE TO stopANGLE STEP stepANGLE
+                IF i&lt;&gt;4 THEN h=0:GOTO 1182
+                ELEVangle=ii:GOSUB 8500
+1182            CirX=Px(i,3)+((h+P(i,5))*SIN(ii+pi))-cenX:CirX=CirX*mag/AU
+                CirY=Py(i,3)+((h+P(i,5))*COS(ii+pi))-cenY:CirY=CirY*mag/AU
+                LINE -(300+CirX,220+CirY), 8*trail
+            NEXT ii
+
+
+108     NEXT i
+        GOTO 102</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-79">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-79">&#182;</a>
+              </div>
               <p>Draw “Habitat “, a structure consisting of one large circle and three
-smaller circles on one side.</p>
+smaller circles on one side. TODO: elaborate</p>
 
             </div>
             
@@ -1481,9 +1588,23 @@ smaller circles on one side.</p>
             FOR j = 230 TO 238
                 LINE -(300 + (((Px(37, 3) + panel(0, j)) - cenX) * mag / AU), 220 + (((Py(37, 3) + panel(1, j)) - cenY) * mag / AU)), clr
             NEXT j
-            RETURN
+            RETURN</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-80">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-80">&#182;</a>
+              </div>
+              <p>Draw “AYSE    “, a circular structure with a large tubular indentation in one
+side that goes to the center, ending in a semicircle.</p>
 
-            'Paint AYSE
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            'Paint AYSE
 158         Ax1 = Px(32, 3) + (500 * SIN(AYSEangle + .19 + pi))
             Ax2 = Px(32, 3) + (500 * SIN(AYSEangle - .19 + pi))
             Ay1 = Py(32, 3) + (500 * COS(AYSEangle + .19 + pi))
@@ -1621,7 +1742,7 @@ smaller circles on one side.</p>
 193     IF ((Dcon - P(CONtarg, 5) - P(28, 5)) &gt; -.5) THEN GOTO 112
 194     eng = 0
         ALTdel=0
-        if CONtarg=4 then ALTdel=MARSelev
+        IF CONtarg=4 THEN ALTdel=MARSelev
         Px(28, 3) = Px(CONtarg, 3) + ((P(CONtarg, 5) + P(28, 5) - .1 + ALTdel) * SIN(Acon + 3.1415926#))
         Py(28, 3) = Py(CONtarg, 3) + ((P(CONtarg, 5) + P(28, 5) - .1 + ALTdel) * COS(Acon + 3.1415926#))
         explFLAG1 = 1
@@ -1648,10 +1769,22 @@ smaller circles on one side.</p>
         OLDcenX=cenX
         OLDcenY=cenY
         cenX = Px(cen, 3) + cenXoff
-        cenY = Py(cen, 3) + cenYoff
+        cenY = Py(cen, 3) + cenYoff</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-81">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-81">&#182;</a>
+              </div>
+              <p>After erasing and leaving trails</p>
 
-
-        'Repaint objects to the screen
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        'Repaint objects to the screen
 111     FOR i = 37 + ufo1 + ufo2 TO 0 STEP -1
             IF i = 36 AND MODULEflag = 0 THEN 109
             if i=4 then 11911
@@ -1665,7 +1798,7 @@ smaller circles on one side.</p>
             IF i = 37 THEN clr = 12: GOSUB 148: GOTO 109
             IF i = 32 THEN clrMASK = 1: GOSUB 158: GOTO 109
             IF i = 12 THEN GOSUB 160
-            if P(i,5)*mag/AU &gt; 300 then 119
+            IF P(i,5)*mag/AU &gt; 300 THEN 119
             CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, P(i, 0) + pld: GOTO 109
 
 119         difX = cenX-Px(i, 3)
@@ -1677,28 +1810,28 @@ smaller circles on one side.</p>
             angleALT=angle
             angle=fix(angle+.5)/rad/160
             arcANGLE = pi * 800/ (P(i,5)*pi2*mag/AU)
-            if arcANGLE&gt;pi then arcANGLE=pi
+            IF arcANGLE&gt;pi THEN arcANGLE=pi
 
             stepANGLE=RAD*160*arcANGLE/90
             stepANGLE=FIX(stepANGLE+1)/RAD/160
             ii = angle-(90*stepANGLE)
-            if i&lt;&gt;4 then h=0: goto 1191
-            ELEVangle=ii:gosub 8500
+            IF i&lt;&gt;4 THEN h=0: GOTO 1191
+            ELEVangle=ii:GOSUB 8500
 
 1191        CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
             CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
-            pset (300+CirX,220+CirY),P(i, 0)
+            PSET (300+CirX,220+CirY),P(i, 0)
 
             startANGLE = angle - (90*stepANGLE)
             stopANGLE = angle + (90*stepANGLE)
-            for ii = startANGLE to stopANGLE step stepANGLE
+            FOR ii = startANGLE to stopANGLE STEP stepANGLE
                 if i&lt;&gt;4 then h=0:goto 1192
                 ELEVangle=ii:gosub 8500
 
 1192            CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
                 CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
-                line -(300+CirX,220+CirY), P(i, 0)
-            next ii
+                LINE -(300+CirX,220+CirY), P(i, 0)
+            NEXT ii
 
 109     NEXT i
 
@@ -1890,8 +2023,6 @@ smaller circles on one side.</p>
         IF z$ = CHR$(0) + "Q" THEN eng = eng + 1: GOSUB 400
         IF z$ = CHR$(0) + "O" THEN eng = eng - 1: GOSUB 400
         IF z$ = "\" THEN eng = eng * -1: GOSUB 400
-'"
-'TODO: remove the above comment
         IF z$ = CHR$(13) THEN eng = 100: GOSUB 400
         IF z$ = CHR$(8) THEN eng = 0: MATCHacc = 0: CONSTacc = 0: GOSUB 400
         IF z$ = CHR$(0) + "H" THEN vern = .1: vernA = 0
@@ -1919,13 +2050,13 @@ smaller circles on one side.</p>
         'IF z$ = "w" THEN SRBtimer = 220
         IF Ztel(8) = 1 THEN 105
         IF z$ &lt;&gt; "/" THEN 104
-        if TSindex &lt; 2 then 105
+        IF TSindex &lt; 2 THEN 105
         TSindex = TSindex - 1
         ts=TSflagVECTOR(TSindex)
         GOSUB 400
 
 104     IF z$ &lt;&gt; "*" THEN 105
-        if TSindex &gt; 16 then 105
+        IF TSindex &gt; 16 THEN 105
         TSindex = TSindex + 1
         ts=TSflagVECTOR(TSindex)
         GOSUB 400
@@ -1933,8 +2064,8 @@ smaller circles on one side.</p>
 105     IF z$ = "s" THEN GOSUB 600
         IF z$ = "r" THEN GOSUB 700
         IF tttt - TIMER &gt; ts * 10 THEN tttt = TIMER + (ts / 2)
-        if TSindex &lt; 6 and TIMER - tttt &lt; ts then 103
-        if TSindex = 6 and TIMER - tttt &lt; .01 then 103
+        IF TSindex &lt; 6 and TIMER - tttt &lt; ts THEN 103
+        IF TSindex = 6 and TIMER - tttt &lt; .01 THEN 103
         GOTO 100
 
 
@@ -1947,7 +2078,7 @@ smaller circles on one side.</p>
         IF SRBtimer &gt; 100 THEN SRB = 131250 ELSE SRB = 0
         IF vernP! &lt; .01 THEN vernP! = 0
         IF ABS(HABrotMALF) * ABS(eng) &gt; .0001 THEN Sflag = 1
-        if (NAVmalf and 3840)&gt;0 then Sflag=1
+        IF (NAVmalf and 3840)&gt;0 THEN Sflag=1
         IF ABS(HABrotate + .5) &lt; .5 * (1 - (vernCNT * .8)) THEN HABrotate = 0
         HABrotate = HABrotate + (HABrotateADJ% * (10 ^ (-1 * vernCNT)))
         HABrotateADJ% = HABrotateADJ% * vernCNT
@@ -2015,9 +2146,9 @@ smaller circles on one side.</p>
         IF Sflag &lt;&gt; 1 THEN 307
         IF HABrotate &lt;&gt; 0 THEN COLOR 15 ELSE COLOR 8
         LOCATE 25, 15: PRINT USING "##.#"; ABS(HABrotate) / 2;
-        If (NAVmalf and 11264)&gt;0 then color 12:rotSYMB$="&gt;" else color 10:rotSYMB$=" "
+        IF (NAVmalf AND 11264)&gt;0 THEN COLOR 12:rotSYMB$="&gt;" ELSE COLOR 10:rotSYMB$=" "
         LOCATE 25, 19: IF HABrotate &lt; 0 THEN PRINT "&gt;";  ELSE PRINT rotSYMB$;
-        If (NAVmalf and 4864)&gt;0 then color 12:rotSYMB$="&lt;" else color 10:rotSYMB$=" "
+        IF (NAVmalf AND 4864)&gt;0 THEN COLOR 12:rotSYMB$="&lt;" ELSE COLOR 10:rotSYMB$=" "
         LOCATE 25, 14: IF HABrotate &gt; 0 THEN PRINT "&lt;";  ELSE PRINT rotSYMB$;
 
 307     COLOR 15
@@ -2097,11 +2228,11 @@ smaller circles on one side.</p>
         </li>
         
         
-        <li id="section-74">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <p><code>HPdisp</code> (possibly standing for “Hyperion display”) appears to be a
 variable controlling the drawing of “Hyperion”. TODO: confirm.</p>
@@ -2114,11 +2245,11 @@ variable controlling the drawing of “Hyperion”. TODO: confirm.</p>
         </li>
         
         
-        <li id="section-75">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <p>Clamp the minimum and maximum <code>ts</code> to 0.015625 and 60 respectively and
 update <code>TSindex</code> to be either the smallest or largest one if <code>ts</code> is out
@@ -2132,11 +2263,11 @@ of bounds.</p>
         </li>
         
         
-        <li id="section-76">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <p>TODO: understand.</p>
 
@@ -2149,11 +2280,11 @@ of bounds.</p>
         </li>
         
         
-        <li id="section-77">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
               </div>
               <p>Indexes <code>1-214</code> of <code>panel</code> are used to draw the box of the “panel” at the
 left side of the display in the main flight screen.</p>
@@ -2171,11 +2302,11 @@ left side of the display in the main flight screen.</p>
         </li>
         
         
-        <li id="section-78">
+        <li id="section-86">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p>TODO: understand</p>
 
@@ -2186,11 +2317,11 @@ left side of the display in the main flight screen.</p>
         </li>
         
         
-        <li id="section-79">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <p>Output labels</p>
 
@@ -2205,11 +2336,11 @@ left side of the display in the main flight screen.</p>
         </li>
         
         
-        <li id="section-80">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
               <p>Output engine throttle label and engine throttle setting in dark gray if
 <code>ENGsetFLAG</code> is 0 and light gray if it is 1, using the format string
@@ -2314,11 +2445,11 @@ left side of the display in the main flight screen.</p>
         </li>
         
         
-        <li id="section-81">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <p>Create a file loading prompt. Curiously, <code>&quot;Load File: &quot;</code> is output first
 at (10, 60), then followed by an input with a blank prompt.</p>
@@ -2332,16 +2463,16 @@ jump to 701 (the code for reading and loading saves).</p>
 700     LOCATE 10, 60: PRINT "Load File: "; : INPUT ; "", filename$
         IF filename$ = "" THEN 703
         DEBUGflag=1
-        goto 701</pre></div></div>
+        GOTO 701</pre></div></div>
             
         </li>
         
         
-        <li id="section-82">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <p>Cover any content on row 10 from column 60 to 77 (78-80 are not covered)
 and then jump to 700 to show a load file prompt.</p>
@@ -2354,35 +2485,35 @@ and then jump to 700 to show a load file prompt.</p>
         </li>
         
         
-        <li id="section-83">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
               <h2 id="start-of-data-file-reading">Start of data file reading</h2>
 <p>Open <code>$filename+&quot;.RND&quot;</code> in “read-only” mode with filenumber #1 and record
 length 1427.</p>
 <p>Make <code>inpSTR$</code> (possibly standing for “input string”) a string of 1427
 spaces. Read the first (at most) 1427 bytes into <code>inpSTR$</code>. Close file #1.</p>
-<p><em>Note</em>: based on FreeBasic documentation, it is not clear what happens if
-the file has less than 1427 bytes.</p>
+<p><em>Note</em>: based on information from the FreeBasic documentation, the behavior
+of the below when the file has less than 1427 bytes is unclear.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>701     OPEN "R", #1, filename$+".RND", 1427
-        inpSTR$=space$(1427)
+        inpSTR$=SPACE$(1427)
         GET #1, 1, inpSTR$
-        close #1</pre></div></div>
+        CLOSE #1</pre></div></div>
             
         </li>
         
         
-        <li id="section-84">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
               <p>If the length of <code>inpSTR$</code> is not 1427, output <code>filename$;&quot; is unusable&quot; at
 (11,60) and jump to</code>702`</p>
@@ -2398,21 +2529,21 @@ jump to 702.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-        if len(inpSTR$) &lt;&gt; 1427 then locate 11,60:print filename$;" is unusable";:goto 702
-        chkCHAR1$=left$(inpSTR$,1)
-        chkCHAR2$=right$(inpSTR$,1)
-        ORBITversion$=mid$(inpSTR$, 2, 7)
-        if chkCHAR1$&lt;&gt;chkCHAR2$ then locate 11,60:print filename$;" is unusable";:goto 702
-        if ORBITversion$&lt;&gt;"ORBIT5S" then locate 11,60:print filename$;" is unusable";:goto 702</pre></div></div>
+        IF LEN(inpSTR$) &lt;&gt; 1427 THEN LOCATE 11,60:PRINT filename$;" is unusable";:GOTO 702
+        chkCHAR1$=LEFT$(inpSTR$,1)
+        chkCHAR2$=RIGHT$(inpSTR$,1)
+        ORBITversion$=MID$(inpSTR$, 2, 7)
+        IF chkCHAR1$&lt;&gt;chkCHAR2$ THEN LOCATE 11,60:PRINT filename$;" is unusable";:GOTO 702
+        IF ORBITversion$&lt;&gt;"ORBIT5S" THEN LOCATE 11,60:PRINT filename$;" is unusable";:GOTO 702</pre></div></div>
             
         </li>
         
         
-        <li id="section-85">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <p><strong>Summary</strong>; The initialization process is as follows. First a prompt is
 shown asking the user to enter a file name to open. If this file exists and
@@ -2432,11 +2563,11 @@ program.</p>
         </li>
         
         
-        <li id="section-86">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <p><code>k</code> serves as a sort of pointer for reading the <code>inpSTR$</code> data string. It
 starts from byte 17. TODO: find what bytes 9-16 are for.</p>
@@ -2453,142 +2584,6 @@ is 32 bits</p>
         </li>
         
         
-        <li id="section-87">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
-              </div>
-              <ul>
-<li><code>eng</code>: <code>single</code>, bytes <code>17-20</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        eng = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-88">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
-              </div>
-              <ul>
-<li><code>vflag</code>: <code>integer</code>, bytes <code>21-22</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        vflag = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-89">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
-              </div>
-              <ul>
-<li><code>Aflag</code>: <code>integer</code>, bytes <code>23-24</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        Aflag = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-90">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
-              </div>
-              <ul>
-<li><code>Sflag</code>: <code>integer</code>, bytes <code>25-26</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        Sflag = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-91">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
-              </div>
-              <ul>
-<li><code>Are</code>: <code>double</code>, bytes <code>27-34</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        Are = cvd(mid$(inpSTR$,k,8)):k=k+8</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-92">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
-              </div>
-              <ul>
-<li><code>mag</code>: <code>double</code>, bytes <code>35-42</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        mag = cvd(mid$(inpSTR$,k,8)):k=k+8</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-93">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
-              </div>
-              <ul>
-<li><code>Sangle</code>: <code>single</code>, bytes <code>43-46</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        Sangle = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-94">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
-              </div>
-              <ul>
-<li><code>cen</code>: <code>integer</code>, bytes <code>47-48</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        cen = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-95">
             <div class="annotation">
               
@@ -2596,12 +2591,12 @@ is 32 bits</p>
                 <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <ul>
-<li><code>targ</code>: <code>integer</code>, bytes <code>49-50</code>. The ID of the target object.</li>
+<li><code>eng</code>: <code>single</code>, bytes <code>17-20</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        targ = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        eng = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -2613,12 +2608,12 @@ is 32 bits</p>
                 <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <ul>
-<li><code>ref</code>: <code>integer</code>, bytes <code>51-52</code>. The ID of the reference object.</li>
+<li><code>vflag</code>: <code>integer</code>, bytes <code>21-22</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        ref = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        vflag = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2630,12 +2625,12 @@ is 32 bits</p>
                 <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <ul>
-<li><code>trail</code>: <code>integer</code>, bytes <code>53-54</code></li>
+<li><code>Aflag</code>: <code>integer</code>, bytes <code>23-24</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        trail=cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Aflag = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2647,12 +2642,12 @@ is 32 bits</p>
                 <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <ul>
-<li><code>Cdh</code>: <code>single</code>, bytes <code>55-58</code></li>
+<li><code>Sflag</code>: <code>integer</code>, bytes <code>25-26</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Cdh = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Sflag = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2664,12 +2659,12 @@ is 32 bits</p>
                 <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <ul>
-<li><code>SRB</code>: <code>single</code>, bytes <code>59-62</code></li>
+<li><code>Are</code>: <code>double</code>, bytes <code>27-34</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        SRB = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Are = CVD(MID$(inpSTR$,k,8)):k=k+8</pre></div></div>
             
         </li>
         
@@ -2681,16 +2676,12 @@ is 32 bits</p>
                 <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <ul>
-<li><code>tr</code>: <code>integer</code>, bytes <code>63-64</code>. As far as can be deduced from the
-executable, <code>tr</code> is a flag, that when set to 1, makes objects leave
-colored trails in their display color. Appears to override the effects
-of <code>trail</code>, which leaves gray traces (but may only be because <code>tr</code> is
-painted after <code>trail</code>, TODO: confirm).</li>
+<li><code>mag</code>: <code>double</code>, bytes <code>35-42</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        tr = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        mag = CVD(MID$(inpSTR$,k,8)):k=k+8</pre></div></div>
             
         </li>
         
@@ -2702,12 +2693,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <ul>
-<li><code>dte</code>: <code>integer</code>, bytes <code>65-66</code></li>
+<li><code>Sangle</code>: <code>single</code>, bytes <code>43-46</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        dte = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Sangle = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -2719,12 +2710,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <ul>
-<li><code>ts</code>: <code>double</code>, bytes <code>67-74</code></li>
+<li><code>cen</code>: <code>integer</code>, bytes <code>47-48</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        ts = cvd(mid$(inpSTR$,k,8)):k=k+8</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        cen = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2736,12 +2727,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <ul>
-<li><code>OLDts</code>: <code>double</code>, bytes <code>75-82</code></li>
+<li><code>targ</code>: <code>integer</code>, bytes <code>49-50</code>. The ID of the target object.</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        OLDts = cvd(mid$(inpSTR$,k,8)):k=k+8</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        targ = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2753,12 +2744,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <ul>
-<li><code>vernP!</code>: <code>single</code>, bytes <code>83-86</code></li>
+<li><code>ref</code>: <code>integer</code>, bytes <code>51-52</code>. The ID of the reference object.</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        vernP! = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        ref = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2770,12 +2761,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <ul>
-<li><code>Eflag</code>: <code>integer</code>, bytes <code>87-88</code></li>
+<li><code>trail</code>: <code>integer</code>, bytes <code>53-54</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Eflag = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        trail=CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2787,12 +2778,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <ul>
-<li><code>year</code>: <code>integer</code>, bytes <code>89-90</code></li>
+<li><code>Cdh</code>: <code>single</code>, bytes <code>55-58</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        year = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Cdh = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -2804,12 +2795,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
               <ul>
-<li><code>day</code>: <code>integer</code>, bytes <code>91-92</code></li>
+<li><code>SRB</code>: <code>single</code>, bytes <code>59-62</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        day = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        SRB = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -2821,12 +2812,16 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <ul>
-<li><code>hr</code>: <code>integer</code>, bytes <code>93-94</code></li>
+<li><code>tr</code>: <code>integer</code>, bytes <code>63-64</code>. As far as can be deduced from the
+executable, <code>tr</code> is a flag, that when set to 1, makes objects leave
+colored trails in their display color. Appears to override the effects
+of <code>trail</code>, which leaves gray traces (but may only be because <code>tr</code> is
+painted after <code>trail</code>, TODO: confirm).</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        hr = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        tr = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2838,12 +2833,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
               <ul>
-<li><code>min</code>: <code>integer</code>, bytes <code>95-96</code></li>
+<li><code>dte</code>: <code>integer</code>, bytes <code>65-66</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        min = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        dte = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2855,12 +2850,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
               <ul>
-<li><code>sec</code>: <code>double</code>, bytes <code>97-104</code></li>
+<li><code>ts</code>: <code>double</code>, bytes <code>67-74</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        sec = cvd(mid$(inpSTR$,k,8)):k=k+8</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        ts = CVD(MID$(inpSTR$,k,8)):k=k+8</pre></div></div>
             
         </li>
         
@@ -2872,12 +2867,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <ul>
-<li><code>AYSEangle</code>: <code>single</code>, bytes <code>105-108</code></li>
+<li><code>OLDts</code>: <code>double</code>, bytes <code>75-82</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        AYSEangle = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        OLDts = CVD(MID$(inpSTR$,k,8)):k=k+8</pre></div></div>
             
         </li>
         
@@ -2889,12 +2884,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <ul>
-<li><code>AYSEscrape</code>: <code>integer</code>, bytes <code>109-110</code></li>
+<li><code>vernP!</code>: <code>single</code>, bytes <code>83-86</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        AYSEscrape = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        vernP! = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -2906,12 +2901,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <ul>
-<li><code>Ztel(15)</code>: <code>single</code>, bytes <code>111-114</code></li>
+<li><code>Eflag</code>: <code>integer</code>, bytes <code>87-88</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Ztel(15) = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Eflag = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2923,12 +2918,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
               <ul>
-<li><code>Ztel(16)</code>: <code>single</code>, bytes <code>115-118</code></li>
+<li><code>year</code>: <code>integer</code>, bytes <code>89-90</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Ztel(16) = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        year = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2940,12 +2935,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
               <ul>
-<li><code>HABrotate</code>: <code>single</code>, bytes <code>119-122</code></li>
+<li><code>day</code>: <code>integer</code>, bytes <code>91-92</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        HABrotate = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        day = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2957,12 +2952,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
               <ul>
-<li><code>AYSE</code>: <code>integer</code>, bytes <code>123-124</code></li>
+<li><code>hr</code>: <code>integer</code>, bytes <code>93-94</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        AYSE = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        hr = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2974,12 +2969,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <ul>
-<li><code>Ztel(9)</code>: <code>single</code>, bytes <code>125-128</code></li>
+<li><code>min</code>: <code>integer</code>, bytes <code>95-96</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Ztel(9) = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        min = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -2991,12 +2986,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <ul>
-<li><code>MODULEflag</code>: <code>integer</code>, bytes <code>129-130</code></li>
+<li><code>sec</code>: <code>double</code>, bytes <code>97-104</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        MODULEflag = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        sec = CVD(MID$(inpSTR$,k,8)):k=k+8</pre></div></div>
             
         </li>
         
@@ -3008,13 +3003,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <ul>
-<li><code>AYSEdist</code>: <code>single</code>, bytes <code>131-134</code>: Distance to “Habitat “ to
-“AYSE    “</li>
+<li><code>AYSEangle</code>: <code>single</code>, bytes <code>105-108</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        AYSEdist = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        AYSEangle = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3026,13 +3020,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <ul>
-<li><code>OCESSdist</code>: <code>single</code>, bytes <code>135-138</code>: Distance from “Habitat “ to
-“OCESS   “</li>
+<li><code>AYSEscrape</code>: <code>integer</code>, bytes <code>109-110</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        OCESSdist = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        AYSEscrape = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -3044,12 +3037,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <ul>
-<li><code>explosion</code>: <code>integer</code>, bytes <code>139-140</code></li>
+<li><code>Ztel(15)</code>: <code>single</code>, bytes <code>111-114</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        explosion = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Ztel(15) = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3061,12 +3054,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <ul>
-<li><code>explosion1</code>: <code>integer</code>, bytes <code>141-142</code></li>
+<li><code>Ztel(16)</code>: <code>single</code>, bytes <code>115-118</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        explosion1 = cvi(mid$(inpSTR$,k,2)):k=k+2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Ztel(16) = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3078,12 +3071,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <ul>
-<li><code>Ztel(1)</code>: <code>single</code>, bytes <code>143-146</code></li>
+<li><code>HABrotate</code>: <code>single</code>, bytes <code>119-122</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Ztel(1) = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        HABrotate = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3095,12 +3088,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <ul>
-<li><code>Ztel(2)</code>: <code>single</code>, bytes <code>147-150</code></li>
+<li><code>AYSE</code>: <code>integer</code>, bytes <code>123-124</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Ztel(2) = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        AYSE = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -3112,12 +3105,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <ul>
-<li><code>NAVmalf</code>: <code>long</code>, bytes <code>151-154</code></li>
+<li><code>Ztel(9)</code>: <code>single</code>, bytes <code>125-128</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        NAVmalf = cvl(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Ztel(9) = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3129,12 +3122,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <ul>
-<li><code>Ztel(14)</code>: <code>single</code>, bytes <code>155-158</code></li>
+<li><code>MODULEflag</code>: <code>integer</code>, bytes <code>129-130</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Ztel(14) = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        MODULEflag = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -3146,12 +3139,13 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <ul>
-<li><code>LONGtarg</code>: <code>single</code>, bytes <code>159-162</code></li>
+<li><code>AYSEdist</code>: <code>single</code>, bytes <code>131-134</code>: Distance to “Habitat “ to
+“AYSE    “</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        LONGtarg = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        AYSEdist = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3163,12 +3157,13 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <ul>
-<li><code>Pr</code>: <code>single</code>, bytes <code>163-166</code></li>
+<li><code>OCESSdist</code>: <code>single</code>, bytes <code>135-138</code>: Distance from “Habitat “ to
+“OCESS   “</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Pr = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        OCESSdist = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3180,12 +3175,12 @@ painted after <code>trail</code>, TODO: confirm).</li>
                 <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <ul>
-<li><code>Agrav</code>: <code>single</code>, bytes <code>167-170</code></li>
+<li><code>explosion</code>: <code>integer</code>, bytes <code>139-140</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Agrav = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        explosion = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -3196,19 +3191,13 @@ painted after <code>trail</code>, TODO: confirm).</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
-              <p>39 32-byte blocks of data are read into <code>Px</code>, <code>Py</code>, <code>Vx</code>, and <code>Vy</code>,
-beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
-<p>In each iteration, 4 doubles are read into <code>Px(i, 3)</code>, <code>Py(i, 3)</code>, <code>Vx(i)</code>,
-<code>Vy(i)</code> respectively in that order.</p>
+              <ul>
+<li><code>explosion1</code>: <code>integer</code>, bytes <code>141-142</code></li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        FOR i = 1 TO 39
-            Px(i, 3) = cvd(mid$(inpSTR$,k,8)):k=k+8
-            Py(i, 3) = cvd(mid$(inpSTR$,k,8)):k=k+8
-            Vx(i) = cvd(mid$(inpSTR$,k,8)):k=k+8
-            Vy(i) = cvd(mid$(inpSTR$,k,8)):k=k+8
-        NEXT i</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        explosion1 = CVI(MID$(inpSTR$,k,2)):k=k+2</pre></div></div>
             
         </li>
         
@@ -3219,9 +3208,13 @@ beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
-              <p>Two more variables are read:</p>
+              <ul>
+<li><code>Ztel(1)</code>: <code>single</code>, bytes <code>143-146</code></li>
+</ul>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>        Ztel(1) = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3233,12 +3226,12 @@ beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
                 <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <ul>
-<li><code>fuel</code>: <code>single</code>, bytes <code>1419-1422</code>. The amount of fuel in the Habitat</li>
+<li><code>Ztel(2)</code>: <code>single</code>, bytes <code>147-150</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        fuel = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Ztel(2) = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3250,12 +3243,12 @@ beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
                 <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <ul>
-<li><code>AYSEfuel</code>: <code>single</code>, bytes <code>1423-1426</code></li>
+<li><code>NAVmalf</code>: <code>long</code>, bytes <code>151-154</code></li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        AYSEfuel = cvs(mid$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        NAVmalf = CVL(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3266,11 +3259,13 @@ beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
-              <p>The last byte (byte 1427) is a check byte (<code>chkCHAR2$</code>, see above) and is
-not used.</p>
-<h2 id="end-of-data-file-reading">End of data file reading</h2>
+              <ul>
+<li><code>Ztel(14)</code>: <code>single</code>, bytes <code>155-158</code></li>
+</ul>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>        Ztel(14) = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3281,9 +3276,13 @@ not used.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
-              <h2 id="data-processing-after-reading-file-">Data processing after reading file.</h2>
+              <ul>
+<li><code>LONGtarg</code>: <code>single</code>, bytes <code>159-162</code></li>
+</ul>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>        LONGtarg = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3294,16 +3293,13 @@ not used.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
-              <p>Reset <code>TSindex</code> to 5. Find the index in <code>TSflagVECTOR</code> with a value
-matching that of <code>ts</code> in the data file loaded and set <code>TSindex</code> to that
-index. If no match is found, <code>TSindex</code> remains at 5.</p>
+              <ul>
+<li><code>Pr</code>: <code>single</code>, bytes <code>163-166</code></li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        TSindex=5
-        for i=1 to 17
-            if TSflagVECTOR(i)=ts then TSindex=i:goto 713
-        next i</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        Pr = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
             
         </li>
         
@@ -3313,6 +3309,141 @@ index. If no match is found, <code>TSindex</code> remains at 5.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-137">&#182;</a>
+              </div>
+              <ul>
+<li><code>Agrav</code>: <code>single</code>, bytes <code>167-170</code></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        Agrav = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-138">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-138">&#182;</a>
+              </div>
+              <p>39 32-byte blocks of data are read into <code>Px</code>, <code>Py</code>, <code>Vx</code>, and <code>Vy</code>,
+beginning with index of 1 each. This covers bytes <code>171-1418</code>.</p>
+<p>In each iteration, 4 doubles are read into <code>Px(i, 3)</code>, <code>Py(i, 3)</code>, <code>Vx(i)</code>,
+<code>Vy(i)</code> respectively in that order.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        FOR i = 1 TO 39
+            Px(i, 3) = CVD(MID$(inpSTR$,k,8)):k=k+8
+            Py(i, 3) = CVD(MID$(inpSTR$,k,8)):k=k+8
+            Vx(i) = CVD(MID$(inpSTR$,k,8)):k=k+8
+            Vy(i) = CVD(MID$(inpSTR$,k,8)):k=k+8
+        NEXT i</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-139">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-139">&#182;</a>
+              </div>
+              <p>Two more variables are read:</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-140">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-140">&#182;</a>
+              </div>
+              <ul>
+<li><code>fuel</code>: <code>single</code>, bytes <code>1419-1422</code>. The amount of fuel in the Habitat</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        fuel = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-141">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-141">&#182;</a>
+              </div>
+              <ul>
+<li><code>AYSEfuel</code>: <code>single</code>, bytes <code>1423-1426</code></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        AYSEfuel = CVS(MID$(inpSTR$,k,4)):k=k+4</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-142">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-142">&#182;</a>
+              </div>
+              <p>The last byte (byte 1427) is a check byte (<code>chkCHAR2$</code>, see above) and is
+not used.</p>
+<h2 id="end-of-data-file-reading">End of data file reading</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-143">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-143">&#182;</a>
+              </div>
+              <h2 id="data-processing-after-reading-file-">Data processing after reading file.</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-144">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-144">&#182;</a>
+              </div>
+              <p>Reset <code>TSindex</code> to 5. Find the index in <code>TSflagVECTOR</code> with a value
+matching that of <code>ts</code> in the data file loaded and set <code>TSindex</code> to that
+index. If no match is found, <code>TSindex</code> remains at 5.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        TSindex=5
+        FOR i=1 TO 17
+            IF TSflagVECTOR(i)=ts THEN TSindex=i:GOTO 713
+        NEXT i</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-145">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <p>“OCESS   “ is placed in a special hard-coded location relative to
 “Earth   “. Upon file load, it is always placed about 6,288,118 m from the
@@ -3327,11 +3458,11 @@ the center of “Earth   “ and matches its velocity with that of “Earth   �
         </li>
         
         
-        <li id="section-138">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-138">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
               <p>Zero out the position, velocity, and “cumulative net acceleration” of
 “PROBE   “ (ID 38) and “unknown “ (ID 39). (TODO: find why this is needed)</p>
@@ -3344,11 +3475,11 @@ the center of “Earth   “ and matches its velocity with that of “Earth   �
         </li>
         
         
-        <li id="section-139">
+        <li id="section-147">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-139">&#182;</a>
+                <a class="pilcrow" href="#section-147">&#182;</a>
               </div>
               <p>TODO: understand</p>
 
@@ -3363,11 +3494,11 @@ the center of “Earth   “ and matches its velocity with that of “Earth   �
         </li>
         
         
-        <li id="section-140">
+        <li id="section-148">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-148">&#182;</a>
               </div>
               <p>The x and y coordinates of the center object are assigned to <code>cenX</code> and
 <code>cenY</code> (likely standing for “center x” and “center y”)</p>
@@ -3380,11 +3511,11 @@ the center of “Earth   “ and matches its velocity with that of “Earth   �
         </li>
         
         
-        <li id="section-141">
+        <li id="section-149">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-149">&#182;</a>
               </div>
               <p>TODO: understand</p>
 
@@ -3419,7 +3550,7 @@ the center of “Earth   “ and matches its velocity with that of “Earth   �
         'SUBROUTINE Timed back-up
 800     filename$="OSBACKUP"
 801     chkBYTE=chkBYTE+1
-        if chkBYTE&gt;58 then chkBYTE=1
+        IF chkBYTE&gt;58 THEN chkBYTE=1
         outSTR$ = chr$(chkBYTE+64)
         outSTR$ = outSTR$ + "ORBIT5S        "
         outSTR$ = outSTR$ + mks$(eng)
@@ -3474,21 +3605,21 @@ the center of “Earth   “ and matches its velocity with that of “Earth   �
         outSTR$ = outSTR$ + mks$(fuel)
         outSTR$ = outSTR$ + mks$(AYSEfuel)
         outSTR$ = outSTR$ + chr$(chkBYTE+64)
-        open "R", #1, filename$+".RND", 1427
-        put #1, 1, outSTR$
+        OPEN "R", #1, filename$+".RND", 1427
+        PUT #1, 1, outSTR$
         CLOSE #1
 
         k=1
 813     OPEN "R", #1, "MST.RND", 26
         inpSTR$=space$(26)
         GET #1, 1, inpSTR$
-        close #1
-        if len(inpSTR$) &lt;&gt; 26 then 811
+        CLOSE #1
+        IF len(inpSTR$) &lt;&gt; 26 THEN 811
         chkCHAR1$=left$(inpSTR$,1)
         chkCHAR2$=right$(inpSTR$,1)
-        if chkCHAR1$=chkCHAR2$ then 816
+        IF chkCHAR1$=chkCHAR2$ THEN 816
         k=k+1
-        if k&lt;5 then 813 else fileINwarn=1:goto 811
+        IF k&lt;5 THEN 813 ELSE fileINwarn=1:GOTO 811
 816     k=2
         MST# = CVD(mid$(inpSTR$,k,8)):k=k+8
         EST# = CVD(mid$(inpSTR$,k,8)):k=k+8
@@ -3500,17 +3631,17 @@ the center of “Earth   “ and matches its velocity with that of “Earth   �
 
 811     k=1
 819     OPEN "R", #1, "ORBITSSE.RND", 210
-        inpSTR$=space$(210)
+        inpSTR$=SPACE$(210)
         GET #1, 1, inpSTR$
-        close #1
-        if len(inpSTR$) &lt;&gt; 210 then locate 25, 1:color 12:print "ENG telem";:goto 812
+        CLOSE #1
+        IF LEN(inpSTR$) &lt;&gt; 210 THEN LOCATE 25, 1:COLOR 12:PRINT "ENG telem";:GOTO 812
         chkCHAR1$=left$(inpSTR$,1)
         chkCHAR2$=right$(inpSTR$,1)
-        if chkCHAR1$=chkCHAR2$ then 818
+        IF chkCHAR1$=chkCHAR2$ THEN 818
         k=k+1
-        if k&lt;3 then 819
-        locate 25, 1:color 12:print "ENG telem*";
-        goto 812
+        IF k&lt;3 THEN 819
+        LOCATE 25, 1:COLOR 12:PRINT "ENG telem*";
+        GOTO 812
 818     k = 2
         FOR i = 1 TO 26
             Ztel(i)=CVD(mid$(inpSTR$,k,8)):k=k+8
@@ -3576,11 +3707,11 @@ the center of “Earth   “ and matches its velocity with that of “Earth   �
         </li>
         
         
-        <li id="section-142">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <p>Subroutine for exioting the  program. Create an input with prompt
 <code>End Program</code> at (10, 60). If the  input is <code>y</code> (case-insensitive), end
@@ -3770,11 +3901,11 @@ being 19 spaces in the “cover” string and not 21) and return.</p>
         </li>
         
         
-        <li id="section-143">
+        <li id="section-151">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-151">&#182;</a>
               </div>
               <p>An implementation of something similar to <code>atan2</code>. Calculates the angle
 from the first object in a pair to the second based on <code>difX</code> and <code>difY</code>.</p>
@@ -3873,11 +4004,11 @@ the display, TODO: confirm) being the direction for which the angle equals</p>
         </li>
         
         
-        <li id="section-144">
+        <li id="section-152">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-152">&#182;</a>
               </div>
               <p>Draw the background stars. TODO: confirm and elaborate</p>
 
@@ -3910,33 +4041,46 @@ the display, TODO: confirm) being the direction for which the angle equals</p>
         LOCATE 25, 61: PRINT USING "####_ "; dyr#; : LOCATE 25, 66: PRINT USING "###"; dday#; dhr#; dmin#;
         IF ts &lt; 60 THEN LOCATE 25, 75: PRINT USING "###"; dsec#;
 
-        RETURN
+        RETURN</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-153">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-153">&#182;</a>
+              </div>
+              <p>Some sort of special handling used only for “Mars    “. TODO: elaborate</p>
 
-8500    z$="  "
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>8500    z$="  "
         x1 = 640 * ((ELEVangle*RAD) + 59.25+180) / 360
         IF x1 &gt; 640 THEN x1 = x1 - 640
         y1 = 50 * SIN((x1 - 174.85) / 101.859164#)
         lngW = 11520*x1/640
         latW = 5760 *(y1+160)/320
-        lng = int(lngW)
-        lat = int(latW)
+        lng = INT(lngW)
+        lat = INT(latW)
 
                 ja=1+(lng)+(lat*11520)
-                get #3, ja, z$
-                h1=cvi(z$)
+                GET #3, ja, z$
+                h1=CVI(z$)
 
                 ja=1+(lng)+((lat+1)*11520)
-                get #3, ja, z$
-                h2=cvi(z$)
+                GET #3, ja, z$
+                h2=CVI(z$)
 
 
-                if LNG=11519 then ja=1+(lat*11520)  else ja=1+(lng+1)+(lat*11520)
-                get #3, ja, z$
-                h3=cvi(z$)
+                IF LNG=11519 THEN ja=1+(lat*11520)  ELSE ja=1+(lng+1)+(lat*11520)
+                GET #3, ja, z$
+                h3=CVI(z$)
 
-                if LNG=11519 then ja=1+((lat+1)*11520)  else ja=1+(lng+1)+((lat+1)*11520)
-                get #3, ja, z$
-                h4=cvi(z$)
+                IF LNG=11519 THEN ja=1+((lat+1)*11520)  ELSE ja=1+(lng+1)+((lat+1)*11520)
+                GET #3, ja, z$
+                h4=CVI(z$)
 
                         LATdel=latW-lat
                         LNDdel=lngW-lng
@@ -3944,16 +4088,16 @@ the display, TODO: confirm) being the direction for which the angle equals</p>
                         h=h+(h2*(LATdel)*(1-LNGdel))
                         h=h+(h3*(1-LATdel)*(LNGdel))
                         h=h+(h4*(LATdel)*(LNGdel))
-                return</pre></div></div>
+                RETURN</pre></div></div>
             
         </li>
         
         
-        <li id="section-145">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
               <p>Error handler. Output at (1, 30) <code>&#39;stars&#39; file is missing or incomplete</code> if
 the line number of the line where the error occurred (the 1-based source
@@ -3972,11 +4116,11 @@ annotations), so even if <code>starsr</code> fails to open, this message is not 
         </li>
         
         
-        <li id="section-146">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
+                <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
               <p>Output the error number and error line number (as described above).</p>
 
@@ -3987,11 +4131,11 @@ annotations), so even if <code>starsr</code> fails to open, this message is not 
         </li>
         
         
-        <li id="section-147">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-147">&#182;</a>
+                <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
               <p>The <code>INPUT$(1)</code> reads 1 character from the console (blocking). This is used
 to implement a sort of “press any key to continue.” After any key is
@@ -4004,16 +4148,16 @@ is pressed, the program ends.</p>
 
 
 9100    OPEN "R", #1, "ORBITSSE.RND", 210
-        inpSTR$=space$(210)
-        get #1, 1, inpSTR$
-        mid$(inpSTR$,202,8)=mkd$(0)
-        put #1, 1, inpSTR$
-        close #1
-        open "O", #1, "orbitstr.txt"
-        if Ztel(26) = 8 then print #1, "OSBACKUP"
-        if Ztel(26) = 24 then print #1, "RESTART"
-        close #1
-        run "orbit5va"</pre></div></div>
+        inpSTR$=SPACE$(210)
+        GET #1, 1, inpSTR$
+        MID$(inpSTR$,202,8)=MKD$(0)
+        PUT #1, 1, inpSTR$
+        CLOSE #1
+        OPEN "O", #1, "orbitstr.txt"
+        IF Ztel(26) = 8 THEN PRINT #1, "OSBACKUP"
+        IF Ztel(26) = 24 THEN PRINT #1, "RESTART"
+        CLOSE #1
+        RUN "orbit5va"</pre></div></div>
             
         </li>
         

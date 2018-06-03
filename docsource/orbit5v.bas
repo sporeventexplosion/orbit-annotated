@@ -1,9 +1,14 @@
 '# This is my (n+1)th attempt at annotating the Orbit5V source code. Hopefully
 '# have slightly better luck this time.
 '#
-'# The original code is retained besides some modifications to whitespace to
-'# clarify code indentation. Some originally commented lines and unreferenced
-'# labels have been removed.
+'# Most original code is retained in this annotated version, besides the
+'# following:
+'# - modifications to whitespace to clarify code indentation. All indentation
+'#   (most original indentation is 1 space) has been converted to 4 spaces.
+'# - All keywords and commands have been converted to uppercase.
+'# - Some commented lines and unreferenced labels have been removed.
+'# Note that uncommented unreachable code and code without any effect is kept
+'# and is labeled as such.
 
 '# `GOTO 9000` when an error occurs, most likely when opening `starsr`.
 1111    ON ERROR GOTO 9000
@@ -139,11 +144,11 @@
 '# Set a number of constants.
 
 '# `ENGsetFLAG` indicates whether the engine is on (1) or not on (0). The
-'# default value, set below, is `1`, or "on"
+'# default value, set below, is `1`, or "on". TODO: confirm
         ENGsetFLAG = 1
 
 '# `mag` controls the magnification factor of the main display. Its effective
-'# unit can be understood to be pixels/AU. It is the length in display pixels
+'# unit can be understood to be pixels/AU. It is the length in pixels
 '# of a 1 astronomical unit line. The default value, set below, is `25`, for
 '# 25 pixels per AU.
         mag = 25
@@ -209,14 +214,14 @@
 '# `"OSBACKUP"`
         'load situation file
         OPEN "I", #1, "orbitstr.txt"
-        if EOF(1) then z$="": close #1: goto 51
+        IF EOF(1) THEN z$="": CLOSE #1: GOTO 51
         INPUT #1, z$
-        if z$="normal" then z$=""
+        IF z$="normal" THEN z$=""
         CLOSE #1
-        open "O", #1, "orbitstr.txt"
-        if z$="RESTART" then print #1, "OSBACKUP"
-        close #1
-        if z$<>"" then 52
+        OPEN "O", #1, "orbitstr.txt"
+        IF z$="RESTART" THEN PRINT #1, "OSBACKUP"
+        CLOSE #1
+        IF z$<>"" THEN 52
 
 '# If `z$` is empty, create input at (5, 5) on the screen (note that
 '# coordinates are 1-based) with the prompt `Restart previous state (or type
@@ -229,15 +234,15 @@
 '#
 '# **Summary**: Create input. Quit if input is `"q"` (case-insensitive); jump
 '# to `52` if input is `"y"` (case-insensitive) or empty.
-51      locate 5,5
+51      LOCATE 5,5
         IF z$ = "" THEN INPUT ; "Restart previous state (or type filename)? ", y$
-        IF UCASE$(LEFT$(y$, 1)) = "Q" THEN end
-        IF UCASE$(LEFT$(y$, 1)) = "Y" THEN z$ = "OSBACKUP": goto 52
-        if y$ = "" then z$ = "OSBACKUP": goto 52
+        IF UCASE$(LEFT$(y$, 1)) = "Q" THEN END
+        IF UCASE$(LEFT$(y$, 1)) = "Y" THEN z$ = "OSBACKUP": GOTO 52
+        IF y$ = "" THEN z$ = "OSBACKUP": GOTO 52
         z$=y$
 
 '# The `end` on this line appear to be unreachable.
-        IF z$ = "" THEN end
+        IF z$ = "" THEN END
 
 '# Let `filename$ = z$`. Go to sub `701`. After return, go to sub `405`.
 52      filename$ = z$: GOSUB 701
@@ -306,8 +311,10 @@
             difX = Px(B(1, i), 3) - Px(B(0, i), 3)
             difY = Py(B(1, i), 3) - Py(B(0, i), 3)
 
-'# Calculates the angle from the first object to the second in radians. The
-'# result is in the variable `angle`.
+'# Go to sub `5000`.
+'#
+'# Calculate the angle from the first object to the second in radians. The
+'# result is in the variable `angle`. See sub `5000` for detail.
             GOSUB 5000
 
 '# Calculate the distance between the two objects using the Pythagorean
@@ -344,7 +351,7 @@
 '#
 '# Set `ELEVangle` to angle, execute sub `8500`, and let `MARSelev=h` and
 '# `r=r-h`.
-            if i = 67 and r<3443500 then ELEVangle=angle: gosub 8500: MARSelev=h:r=r-h
+            IF i = 67 AND r<3443500 then ELEVangle=angle: gosub 8500: MARSelev=h:r=r-h
 
             'IF i = 79 THEN GOSUB 166
 
@@ -390,7 +397,7 @@
 '# 1,000,000 m from the surface of "Ganymede" (assumed to be a perfect circle,
 '# change the x position and y position of "Ganymede" to both be 1e30.
 '# Todo: understand why this exists
-            if (B(1, i) = 32 and B(0, i) = 15) and r<1000000+P(15,5) then Px(15,3)=1e30: Py(15,3)= 1e30
+            IF (B(1, i) = 32 and B(0, i) = 15) AND r<1000000+P(15,5) THEN Px(15,3)=1e30: Py(15,3)= 1e30
 
 '# Get the angle and distance to the center of the target, relative to
 '# "Habitat", and the magnitude of the acceleration cause by the target on
@@ -433,7 +440,7 @@
         IF CONflag = 1 AND CONtarg = 12 THEN CONflag = .25
         'IF CONflag = 1 AND CONtarg = 14 THEN 9111
 
-'# Record the old (before position update in each step) position of the center
+'# Record the old (before position update for each step) position of the center
 '# of the center object in `cenX` and `cenY`.
 '# TODO: find what cenXoff and cenYoff do.
         'Record old center position
@@ -447,8 +454,8 @@
         IF vflag = 1 THEN LINE (300 + (Px(28, 3) - cenX) * mag / AU, 220 + (Py(28, 3) - cenY) * mag * 1 / AU)-(300 + (20 * SIN(Vvangle)) + (Px(28, 3) - cenX) * mag / AU, 220 + (20 * COS(Vvangle)) + (Py(28, 3) - cenY) * mag * 1 / AU), 0
 
 '# Update the velocity of each object based on the acceleration calculated
-'# above. "cover" the previous object by drawing a black version of itself over
-'# it.
+'# above. "overwrite" the previous object by drawing a black version of itself
+'# on its old position.
 '#
 '# Iterate every object from 37 (or different depending on `ufo1` and `ufo2`,
 '# TODO: clarify) to 0 in descending order.
@@ -479,7 +486,7 @@
 
 '# Special handling for "Mars    ". This means that "Mars    " is drawn
 '# regardless of how far "out of frame" it is.
-            if i=4 then 11811
+            IF i=4 then 11811
 
 '# If the distance of the center of the object to the display center in pixels
 '# (taking into account the magnification setting) minus the radius of the
@@ -508,7 +515,7 @@
             clr = 8 * trail
 
 '# `vnSa` is the angle of the habitat in radians, according to the
-'# convention of . Go to sub `128` to either "blank" the drawing of
+'# convention of sub `5000`. Go to sub `128` to either "blank" the drawing of
 '# "Habitat " using black or to leave a "trail" using dark gray, depending on
 '# `trail`. "Continue" afterwards. The same process is done for "ISS     ",
 '# "OCESS   ", and "AYSE    ". These each have their custom draw procedure.
@@ -519,77 +526,107 @@
             IF i = 12 AND HPdisp = 1 THEN 108
 
 '# Jump to `118` to perform special drawing if the radius of the current object
-'# in display pixels is greater than 300.
-            if P(i,5)*mag/AU>300 then 118
+'# in pixels is greater than 300.
+            IF P(i,5)*mag/AU>300 THEN 118
 
 '# If no special handling is needed, draw a circle with color black or dark gray
 '# depending on `trail` to "cover" the old circle or to leave a "trail".
 '#
 '# `(Px(i, 3) - cenX) * mag / AU` and `(Py(i, 3) - cenY) * mag * 1 / AU)` are
 '# respectively the x and y positions of the current object relative to the
-'# current center, converted into display pixels with regard to the current
+'# current center, converted into pixels with regard to the current
 '# magnification level. These screen coordinates are offset so that the center
 '# corresponds to the screen position (300, 220). `mag * P(i, 5) / AU` is the
-'# radius of the current object, converted into display pixels. "Continue" after
+'# radius of the current object, converted into pixels. "Continue" after
 '# drawing this circle.
             CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, 8 * trail: GOTO 108
 
 '# `difX` and `difY` represent the distance from the display center to the
-'# center of the current object, in m. `dist` is the distance of the center of
-'# the object to the display center in pixels minus the radius of the object
-'# in pixels. Go to sub `5000` to calculate an "atan2", with the result in
-'# `angle`.
+'# center of the current object, in m.
 118         difX = cenX-Px(i, 3)
             difY = cenY-Py(i, 3)
+
+'# `dist` is the distance of the center of the object to the display center in
+'# pixels minus the radius of the object in pixels. For a circular object, this
+'# is effectively the distance from the display center to the surface of the
+'# object in pixels. This value is negative when the distance from the display
+'# center to the center of the current object is less than the object's radius.
+
             dist = (SQR((difY ^ 2) + (difX ^ 2)) - P(i, 5)) * mag / AU
+
+'# Go to sub `5000` to calculate the angle from the current object to the
+'# display center (see sub `5000` for angle convention).
             GOSUB 5000
 
 '# Convert `angle` from radians to degrees and multiply the result by 160,
-'# then round the angle and then convert it back to radians.
+'# round to the nearest integer, divide by 160, and then convert back to radians.
 '#
-'# The two lines have the effect of rounding the angle to 160ths of a degree.
+'# The two lines have the effect of rounding the angle to (1/160)s of a degree.
 '#
 '# `fix` is like `trunc` in some other languages. The function truncates the
 '# digits after the decimal point, irrespective of sign. For positive values
 '# of `x`, `fix(x + 0.5)` is equivalent to `round(x)`.
             angle = angle * rad*160   '32
-            angle=fix(angle+.5)/rad/160  '32
+            angle=FIX(angle+.5)/rad/160  '32
 
+'# Set `arcANGLE` to 400 pixels divided by the radius of the current object in
+'# pixels.
+'#
 '# `P(i, 5) * pi2` is the circumference of the current object (assuming a
-'# perfect circle). This is converted to display pixel units by multiplying by
-'# `mag/AU`, which takes into account the current magnification. The value
-'# computed is the circumference of the current object in display pixels. The
-'# computation is mathematically equivalent to `400 / (P(i,5) * mag / AU`.
-'# TODO: this is very confusing. Understand
+'# perfect circle). This is converted to pixel units by multiplying `mag/AU`,
+'# which takes into account the current magnification. The value computed is the
+'# circumference of the current object in pixels. The calculation is
+'# mathematically equivalent to `400 / (P(i,5) * mag / AU)`.
+'#
+'# `arcANGLE` increases as object radius decreases. The maximum `arcANGLE` is pi
+'#  which is reached when the object display radius is less than about 127.3240
+'# pixels.
             arcANGLE = pi * 800/ (P(i,5)*pi2*mag/AU)
-            if arcANGLE>pi then arcANGLE=pi
+            IF arcANGLE>pi THEN arcANGLE=pi
+
+'# This line is apparently useless as `stepANGLE` is immediately overwritten in
+'# the next line without being used. `Let `stepANGLE` be 1/90 of `arcANGLE`.
             stepANGLE=arcANGLE/90
+
+'# These lines have the approximate effect of dividing `stepANGLE` by 90, but
+'# also increases it to the next largest multiple of 90 pi / (160 * 180).
+'# TODO: confirm calculations
+'# Let `stepANGLE` equal 160/90 of `arcANGLE` converted from radians to degrees.
+'#
+'# Let `stepANGLE` equal `stepANGLE + 1` truncated, then divided by the number
+'# of degrees in 1 radian and by 160.
             stepANGLE=RAD*160*arcANGLE/90
             stepANGLE=FIX(stepANGLE+1)/RAD/160
+
+'# Let ii equal `angle` (the angle from the current object to the display
+'# center) minus 90 times `stepANGLE`.
             ii = angle-(90*stepANGLE)
-            if i<>4 then h=0: goto 1181
+
+'# If the current object is not "Mars    ", let `h = 0` and jump to `1181`.
+'# Otherwise, let `ELEVangle = ii` and go to sub `8500`.
+            IF i<>4 THEN h=0: goto 1181
             ELEVangle=ii:gosub 8500
 
 1181        CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
             CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
-            pset (300+CirX,220+CirY),8*trail
+            PSET (300+CirX,220+CirY),8*trail
 
             startANGLE = angle - (90*stepANGLE)
             stopANGLE = angle + (90*stepANGLE)
-            for ii = startANGLE to stopANGLE step stepANGLE
-                if i<>4 then h=0:goto 1182
-                ELEVangle=ii:gosub 8500
-1182            CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
-                CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
-                line -(300+CirX,220+CirY), 8*trail
-            next ii
+            FOR ii = startANGLE TO stopANGLE STEP stepANGLE
+                IF i<>4 THEN h=0:GOTO 1182
+                ELEVangle=ii:GOSUB 8500
+1182            CirX=Px(i,3)+((h+P(i,5))*SIN(ii+pi))-cenX:CirX=CirX*mag/AU
+                CirY=Py(i,3)+((h+P(i,5))*COS(ii+pi))-cenY:CirY=CirY*mag/AU
+                LINE -(300+CirX,220+CirY), 8*trail
+            NEXT ii
 
 
 108     NEXT i
         GOTO 102
 
 '# Draw "Habitat ", a structure consisting of one large circle and three
-'# smaller circles on one side.
+'# smaller circles on one side. TODO: elaborate
             'Paint Habitat
 128         CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, clr
             CIRCLE (300 + (Px(i, 3) - cenX - (P(i, 5) * .8 * SIN(vnSa))) * mag / AU, 220 + (Py(i, 3) - cenY - (P(i, 5) * .8 * COS(vnSa))) * mag * 1 / AU), mag * P(i, 5) * .2 / AU, clr
@@ -610,6 +647,8 @@
             NEXT j
             RETURN
 
+'# Draw "AYSE    ", a circular structure with a large tubular indentation in one
+'# side that goes to the center, ending in a semicircle.
             'Paint AYSE
 158         Ax1 = Px(32, 3) + (500 * SIN(AYSEangle + .19 + pi))
             Ax2 = Px(32, 3) + (500 * SIN(AYSEangle - .19 + pi))
@@ -748,7 +787,7 @@
 193     IF ((Dcon - P(CONtarg, 5) - P(28, 5)) > -.5) THEN GOTO 112
 194     eng = 0
         ALTdel=0
-        if CONtarg=4 then ALTdel=MARSelev
+        IF CONtarg=4 THEN ALTdel=MARSelev
         Px(28, 3) = Px(CONtarg, 3) + ((P(CONtarg, 5) + P(28, 5) - .1 + ALTdel) * SIN(Acon + 3.1415926#))
         Py(28, 3) = Py(CONtarg, 3) + ((P(CONtarg, 5) + P(28, 5) - .1 + ALTdel) * COS(Acon + 3.1415926#))
         explFLAG1 = 1
@@ -777,7 +816,7 @@
         cenX = Px(cen, 3) + cenXoff
         cenY = Py(cen, 3) + cenYoff
 
-
+'# After erasing and leaving trails
         'Repaint objects to the screen
 111     FOR i = 37 + ufo1 + ufo2 TO 0 STEP -1
             IF i = 36 AND MODULEflag = 0 THEN 109
@@ -792,7 +831,7 @@
             IF i = 37 THEN clr = 12: GOSUB 148: GOTO 109
             IF i = 32 THEN clrMASK = 1: GOSUB 158: GOTO 109
             IF i = 12 THEN GOSUB 160
-            if P(i,5)*mag/AU > 300 then 119
+            IF P(i,5)*mag/AU > 300 THEN 119
             CIRCLE (300 + (Px(i, 3) - cenX) * mag / AU, 220 + (Py(i, 3) - cenY) * mag * 1 / AU), mag * P(i, 5) / AU, P(i, 0) + pld: GOTO 109
 
 119         difX = cenX-Px(i, 3)
@@ -804,28 +843,28 @@
             angleALT=angle
             angle=fix(angle+.5)/rad/160
             arcANGLE = pi * 800/ (P(i,5)*pi2*mag/AU)
-            if arcANGLE>pi then arcANGLE=pi
+            IF arcANGLE>pi THEN arcANGLE=pi
 
             stepANGLE=RAD*160*arcANGLE/90
             stepANGLE=FIX(stepANGLE+1)/RAD/160
             ii = angle-(90*stepANGLE)
-            if i<>4 then h=0: goto 1191
-            ELEVangle=ii:gosub 8500
+            IF i<>4 THEN h=0: GOTO 1191
+            ELEVangle=ii:GOSUB 8500
 
 1191        CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
             CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
-            pset (300+CirX,220+CirY),P(i, 0)
+            PSET (300+CirX,220+CirY),P(i, 0)
 
             startANGLE = angle - (90*stepANGLE)
             stopANGLE = angle + (90*stepANGLE)
-            for ii = startANGLE to stopANGLE step stepANGLE
+            FOR ii = startANGLE to stopANGLE STEP stepANGLE
                 if i<>4 then h=0:goto 1192
                 ELEVangle=ii:gosub 8500
 
 1192            CirX=Px(i,3)+((h+P(i,5))*sin(ii+pi))-cenX:CirX=CirX*mag/AU
                 CirY=Py(i,3)+((h+P(i,5))*cos(ii+pi))-cenY:CirY=CirY*mag/AU
-                line -(300+CirX,220+CirY), P(i, 0)
-            next ii
+                LINE -(300+CirX,220+CirY), P(i, 0)
+            NEXT ii
 
 109     NEXT i
 
@@ -1017,8 +1056,6 @@
         IF z$ = CHR$(0) + "Q" THEN eng = eng + 1: GOSUB 400
         IF z$ = CHR$(0) + "O" THEN eng = eng - 1: GOSUB 400
         IF z$ = "\" THEN eng = eng * -1: GOSUB 400
-'"
-'TODO: remove the above comment
         IF z$ = CHR$(13) THEN eng = 100: GOSUB 400
         IF z$ = CHR$(8) THEN eng = 0: MATCHacc = 0: CONSTacc = 0: GOSUB 400
         IF z$ = CHR$(0) + "H" THEN vern = .1: vernA = 0
@@ -1046,13 +1083,13 @@
         'IF z$ = "w" THEN SRBtimer = 220
         IF Ztel(8) = 1 THEN 105
         IF z$ <> "/" THEN 104
-        if TSindex < 2 then 105
+        IF TSindex < 2 THEN 105
         TSindex = TSindex - 1
         ts=TSflagVECTOR(TSindex)
         GOSUB 400
 
 104     IF z$ <> "*" THEN 105
-        if TSindex > 16 then 105
+        IF TSindex > 16 THEN 105
         TSindex = TSindex + 1
         ts=TSflagVECTOR(TSindex)
         GOSUB 400
@@ -1060,8 +1097,8 @@
 105     IF z$ = "s" THEN GOSUB 600
         IF z$ = "r" THEN GOSUB 700
         IF tttt - TIMER > ts * 10 THEN tttt = TIMER + (ts / 2)
-        if TSindex < 6 and TIMER - tttt < ts then 103
-        if TSindex = 6 and TIMER - tttt < .01 then 103
+        IF TSindex < 6 and TIMER - tttt < ts THEN 103
+        IF TSindex = 6 and TIMER - tttt < .01 THEN 103
         GOTO 100
 
 
@@ -1074,7 +1111,7 @@
         IF SRBtimer > 100 THEN SRB = 131250 ELSE SRB = 0
         IF vernP! < .01 THEN vernP! = 0
         IF ABS(HABrotMALF) * ABS(eng) > .0001 THEN Sflag = 1
-        if (NAVmalf and 3840)>0 then Sflag=1
+        IF (NAVmalf and 3840)>0 THEN Sflag=1
         IF ABS(HABrotate + .5) < .5 * (1 - (vernCNT * .8)) THEN HABrotate = 0
         HABrotate = HABrotate + (HABrotateADJ% * (10 ^ (-1 * vernCNT)))
         HABrotateADJ% = HABrotateADJ% * vernCNT
@@ -1142,9 +1179,9 @@
         IF Sflag <> 1 THEN 307
         IF HABrotate <> 0 THEN COLOR 15 ELSE COLOR 8
         LOCATE 25, 15: PRINT USING "##.#"; ABS(HABrotate) / 2;
-        If (NAVmalf and 11264)>0 then color 12:rotSYMB$=">" else color 10:rotSYMB$=" "
+        IF (NAVmalf AND 11264)>0 THEN COLOR 12:rotSYMB$=">" ELSE COLOR 10:rotSYMB$=" "
         LOCATE 25, 19: IF HABrotate < 0 THEN PRINT ">";  ELSE PRINT rotSYMB$;
-        If (NAVmalf and 4864)>0 then color 12:rotSYMB$="<" else color 10:rotSYMB$=" "
+        IF (NAVmalf AND 4864)>0 THEN COLOR 12:rotSYMB$="<" ELSE COLOR 10:rotSYMB$=" "
         LOCATE 25, 14: IF HABrotate > 0 THEN PRINT "<";  ELSE PRINT rotSYMB$;
 
 307     COLOR 15
@@ -1367,7 +1404,7 @@
 700     LOCATE 10, 60: PRINT "Load File: "; : INPUT ; "", filename$
         IF filename$ = "" THEN 703
         DEBUGflag=1
-        goto 701
+        GOTO 701
 
 '# Cover any content on row 10 from column 60 to 77 (78-80 are not covered)
 '# and then jump to 700 to show a load file prompt.
@@ -1381,12 +1418,12 @@
 '# Make `inpSTR$` (possibly standing for "input string") a string of 1427
 '# spaces. Read the first (at most) 1427 bytes into `inpSTR$`. Close file #1.
 '#
-'# *Note*: based on FreeBasic documentation, it is not clear what happens if
-'# the file has less than 1427 bytes.
+'# *Note*: based on information from the FreeBasic documentation, the behavior
+'# of the below when the file has less than 1427 bytes is unclear.
 701     OPEN "R", #1, filename$+".RND", 1427
-        inpSTR$=space$(1427)
+        inpSTR$=SPACE$(1427)
         GET #1, 1, inpSTR$
-        close #1
+        CLOSE #1
 
 '# If the length of `inpSTR$` is not 1427, output `filename$;" is unusable" at
 '# (11,60) and jump to `702`
@@ -1402,12 +1439,12 @@
 '# not equal to "ORBIT5S", output `filename$;" is unusable"` at (11,60) and
 '# jump to 702.
 
-        if len(inpSTR$) <> 1427 then locate 11,60:print filename$;" is unusable";:goto 702
-        chkCHAR1$=left$(inpSTR$,1)
-        chkCHAR2$=right$(inpSTR$,1)
-        ORBITversion$=mid$(inpSTR$, 2, 7)
-        if chkCHAR1$<>chkCHAR2$ then locate 11,60:print filename$;" is unusable";:goto 702
-        if ORBITversion$<>"ORBIT5S" then locate 11,60:print filename$;" is unusable";:goto 702
+        IF LEN(inpSTR$) <> 1427 THEN LOCATE 11,60:PRINT filename$;" is unusable";:GOTO 702
+        chkCHAR1$=LEFT$(inpSTR$,1)
+        chkCHAR2$=RIGHT$(inpSTR$,1)
+        ORBITversion$=MID$(inpSTR$, 2, 7)
+        IF chkCHAR1$<>chkCHAR2$ THEN LOCATE 11,60:PRINT filename$;" is unusable";:GOTO 702
+        IF ORBITversion$<>"ORBIT5S" THEN LOCATE 11,60:PRINT filename$;" is unusable";:GOTO 702
 
 '# **Summary**; The initialization process is as follows. First a prompt is
 '# shown asking the user to enter a file name to open. If this file exists and
@@ -1434,139 +1471,139 @@
         k=2+15
 
 '# - `eng`: `single`, bytes `17-20`
-        eng = cvs(mid$(inpSTR$,k,4)):k=k+4
+        eng = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `vflag`: `integer`, bytes `21-22`
-        vflag = cvi(mid$(inpSTR$,k,2)):k=k+2
+        vflag = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `Aflag`: `integer`, bytes `23-24`
-        Aflag = cvi(mid$(inpSTR$,k,2)):k=k+2
+        Aflag = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `Sflag`: `integer`, bytes `25-26`
-        Sflag = cvi(mid$(inpSTR$,k,2)):k=k+2
+        Sflag = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `Are`: `double`, bytes `27-34`
-        Are = cvd(mid$(inpSTR$,k,8)):k=k+8
+        Are = CVD(MID$(inpSTR$,k,8)):k=k+8
 
 '# - `mag`: `double`, bytes `35-42`
-        mag = cvd(mid$(inpSTR$,k,8)):k=k+8
+        mag = CVD(MID$(inpSTR$,k,8)):k=k+8
 
 '# - `Sangle`: `single`, bytes `43-46`
-        Sangle = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Sangle = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `cen`: `integer`, bytes `47-48`
-        cen = cvi(mid$(inpSTR$,k,2)):k=k+2
+        cen = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `targ`: `integer`, bytes `49-50`. The ID of the target object.
-        targ = cvi(mid$(inpSTR$,k,2)):k=k+2
+        targ = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `ref`: `integer`, bytes `51-52`. The ID of the reference object.
-        ref = cvi(mid$(inpSTR$,k,2)):k=k+2
+        ref = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `trail`: `integer`, bytes `53-54`
-        trail=cvi(mid$(inpSTR$,k,2)):k=k+2
+        trail=CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `Cdh`: `single`, bytes `55-58`
-        Cdh = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Cdh = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `SRB`: `single`, bytes `59-62`
-        SRB = cvs(mid$(inpSTR$,k,4)):k=k+4
+        SRB = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `tr`: `integer`, bytes `63-64`. As far as can be deduced from the
 '#   executable, `tr` is a flag, that when set to 1, makes objects leave
 '#   colored trails in their display color. Appears to override the effects
 '#   of `trail`, which leaves gray traces (but may only be because `tr` is
 '#   painted after `trail`, TODO: confirm).
-        tr = cvi(mid$(inpSTR$,k,2)):k=k+2
+        tr = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `dte`: `integer`, bytes `65-66`
-        dte = cvi(mid$(inpSTR$,k,2)):k=k+2
+        dte = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `ts`: `double`, bytes `67-74`
-        ts = cvd(mid$(inpSTR$,k,8)):k=k+8
+        ts = CVD(MID$(inpSTR$,k,8)):k=k+8
 
 '# - `OLDts`: `double`, bytes `75-82`
-        OLDts = cvd(mid$(inpSTR$,k,8)):k=k+8
+        OLDts = CVD(MID$(inpSTR$,k,8)):k=k+8
 
 '# - `vernP!`: `single`, bytes `83-86`
-        vernP! = cvs(mid$(inpSTR$,k,4)):k=k+4
+        vernP! = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `Eflag`: `integer`, bytes `87-88`
-        Eflag = cvi(mid$(inpSTR$,k,2)):k=k+2
+        Eflag = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `year`: `integer`, bytes `89-90`
-        year = cvi(mid$(inpSTR$,k,2)):k=k+2
+        year = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `day`: `integer`, bytes `91-92`
-        day = cvi(mid$(inpSTR$,k,2)):k=k+2
+        day = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `hr`: `integer`, bytes `93-94`
-        hr = cvi(mid$(inpSTR$,k,2)):k=k+2
+        hr = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `min`: `integer`, bytes `95-96`
-        min = cvi(mid$(inpSTR$,k,2)):k=k+2
+        min = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `sec`: `double`, bytes `97-104`
-        sec = cvd(mid$(inpSTR$,k,8)):k=k+8
+        sec = CVD(MID$(inpSTR$,k,8)):k=k+8
 
 '# - `AYSEangle`: `single`, bytes `105-108`
-        AYSEangle = cvs(mid$(inpSTR$,k,4)):k=k+4
+        AYSEangle = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `AYSEscrape`: `integer`, bytes `109-110`
-        AYSEscrape = cvi(mid$(inpSTR$,k,2)):k=k+2
+        AYSEscrape = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `Ztel(15)`: `single`, bytes `111-114`
-        Ztel(15) = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Ztel(15) = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `Ztel(16)`: `single`, bytes `115-118`
-        Ztel(16) = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Ztel(16) = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `HABrotate`: `single`, bytes `119-122`
-        HABrotate = cvs(mid$(inpSTR$,k,4)):k=k+4
+        HABrotate = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `AYSE`: `integer`, bytes `123-124`
-        AYSE = cvi(mid$(inpSTR$,k,2)):k=k+2
+        AYSE = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `Ztel(9)`: `single`, bytes `125-128`
-        Ztel(9) = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Ztel(9) = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `MODULEflag`: `integer`, bytes `129-130`
-        MODULEflag = cvi(mid$(inpSTR$,k,2)):k=k+2
+        MODULEflag = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `AYSEdist`: `single`, bytes `131-134`: Distance to "Habitat " to
 '#   "AYSE    "
-        AYSEdist = cvs(mid$(inpSTR$,k,4)):k=k+4
+        AYSEdist = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `OCESSdist`: `single`, bytes `135-138`: Distance from "Habitat " to
 '#   "OCESS   "
-        OCESSdist = cvs(mid$(inpSTR$,k,4)):k=k+4
+        OCESSdist = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `explosion`: `integer`, bytes `139-140`
-        explosion = cvi(mid$(inpSTR$,k,2)):k=k+2
+        explosion = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `explosion1`: `integer`, bytes `141-142`
-        explosion1 = cvi(mid$(inpSTR$,k,2)):k=k+2
+        explosion1 = CVI(MID$(inpSTR$,k,2)):k=k+2
 
 '# - `Ztel(1)`: `single`, bytes `143-146`
-        Ztel(1) = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Ztel(1) = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `Ztel(2)`: `single`, bytes `147-150`
-        Ztel(2) = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Ztel(2) = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `NAVmalf`: `long`, bytes `151-154`
-        NAVmalf = cvl(mid$(inpSTR$,k,4)):k=k+4
+        NAVmalf = CVL(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `Ztel(14)`: `single`, bytes `155-158`
-        Ztel(14) = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Ztel(14) = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `LONGtarg`: `single`, bytes `159-162`
-        LONGtarg = cvs(mid$(inpSTR$,k,4)):k=k+4
+        LONGtarg = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `Pr`: `single`, bytes `163-166`
-        Pr = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Pr = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `Agrav`: `single`, bytes `167-170`
-        Agrav = cvs(mid$(inpSTR$,k,4)):k=k+4
+        Agrav = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# 39 32-byte blocks of data are read into `Px`, `Py`, `Vx`, and `Vy`,
 '# beginning with index of 1 each. This covers bytes `171-1418`.
@@ -1574,19 +1611,19 @@
 '# In each iteration, 4 doubles are read into `Px(i, 3)`, `Py(i, 3)`, `Vx(i)`,
 '# `Vy(i)` respectively in that order.
         FOR i = 1 TO 39
-            Px(i, 3) = cvd(mid$(inpSTR$,k,8)):k=k+8
-            Py(i, 3) = cvd(mid$(inpSTR$,k,8)):k=k+8
-            Vx(i) = cvd(mid$(inpSTR$,k,8)):k=k+8
-            Vy(i) = cvd(mid$(inpSTR$,k,8)):k=k+8
+            Px(i, 3) = CVD(MID$(inpSTR$,k,8)):k=k+8
+            Py(i, 3) = CVD(MID$(inpSTR$,k,8)):k=k+8
+            Vx(i) = CVD(MID$(inpSTR$,k,8)):k=k+8
+            Vy(i) = CVD(MID$(inpSTR$,k,8)):k=k+8
         NEXT i
 
 '# Two more variables are read:
 
 '# - `fuel`: `single`, bytes `1419-1422`. The amount of fuel in the Habitat
-        fuel = cvs(mid$(inpSTR$,k,4)):k=k+4
+        fuel = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# - `AYSEfuel`: `single`, bytes `1423-1426`
-        AYSEfuel = cvs(mid$(inpSTR$,k,4)):k=k+4
+        AYSEfuel = CVS(MID$(inpSTR$,k,4)):k=k+4
 
 '# The last byte (byte 1427) is a check byte (`chkCHAR2$`, see above) and is
 '# not used.
@@ -1599,9 +1636,9 @@
 '# matching that of `ts` in the data file loaded and set `TSindex` to that
 '# index. If no match is found, `TSindex` remains at 5.
         TSindex=5
-        for i=1 to 17
-            if TSflagVECTOR(i)=ts then TSindex=i:goto 713
-        next i
+        FOR i=1 TO 17
+            IF TSflagVECTOR(i)=ts THEN TSindex=i:GOTO 713
+        NEXT i
 
 '# "OCESS   " is placed in a special hard-coded location relative to
 '# "Earth   ". Upon file load, it is always placed about 6,288,118 m from the
@@ -1657,7 +1694,7 @@
         'SUBROUTINE Timed back-up
 800     filename$="OSBACKUP"
 801     chkBYTE=chkBYTE+1
-        if chkBYTE>58 then chkBYTE=1
+        IF chkBYTE>58 THEN chkBYTE=1
         outSTR$ = chr$(chkBYTE+64)
         outSTR$ = outSTR$ + "ORBIT5S        "
         outSTR$ = outSTR$ + mks$(eng)
@@ -1712,21 +1749,21 @@
         outSTR$ = outSTR$ + mks$(fuel)
         outSTR$ = outSTR$ + mks$(AYSEfuel)
         outSTR$ = outSTR$ + chr$(chkBYTE+64)
-        open "R", #1, filename$+".RND", 1427
-        put #1, 1, outSTR$
+        OPEN "R", #1, filename$+".RND", 1427
+        PUT #1, 1, outSTR$
         CLOSE #1
 
         k=1
 813     OPEN "R", #1, "MST.RND", 26
         inpSTR$=space$(26)
         GET #1, 1, inpSTR$
-        close #1
-        if len(inpSTR$) <> 26 then 811
+        CLOSE #1
+        IF len(inpSTR$) <> 26 THEN 811
         chkCHAR1$=left$(inpSTR$,1)
         chkCHAR2$=right$(inpSTR$,1)
-        if chkCHAR1$=chkCHAR2$ then 816
+        IF chkCHAR1$=chkCHAR2$ THEN 816
         k=k+1
-        if k<5 then 813 else fileINwarn=1:goto 811
+        IF k<5 THEN 813 ELSE fileINwarn=1:GOTO 811
 816     k=2
         MST# = CVD(mid$(inpSTR$,k,8)):k=k+8
         EST# = CVD(mid$(inpSTR$,k,8)):k=k+8
@@ -1738,17 +1775,17 @@
 
 811     k=1
 819     OPEN "R", #1, "ORBITSSE.RND", 210
-        inpSTR$=space$(210)
+        inpSTR$=SPACE$(210)
         GET #1, 1, inpSTR$
-        close #1
-        if len(inpSTR$) <> 210 then locate 25, 1:color 12:print "ENG telem";:goto 812
+        CLOSE #1
+        IF LEN(inpSTR$) <> 210 THEN LOCATE 25, 1:COLOR 12:PRINT "ENG telem";:GOTO 812
         chkCHAR1$=left$(inpSTR$,1)
         chkCHAR2$=right$(inpSTR$,1)
-        if chkCHAR1$=chkCHAR2$ then 818
+        IF chkCHAR1$=chkCHAR2$ THEN 818
         k=k+1
-        if k<3 then 819
-        locate 25, 1:color 12:print "ENG telem*";
-        goto 812
+        IF k<3 THEN 819
+        LOCATE 25, 1:COLOR 12:PRINT "ENG telem*";
+        GOTO 812
 818     k = 2
         FOR i = 1 TO 26
             Ztel(i)=CVD(mid$(inpSTR$,k,8)):k=k+8
@@ -2116,31 +2153,32 @@
 
         RETURN
 
+'# Some sort of special handling used only for "Mars    ". TODO: elaborate
 8500    z$="  "
         x1 = 640 * ((ELEVangle*RAD) + 59.25+180) / 360
         IF x1 > 640 THEN x1 = x1 - 640
         y1 = 50 * SIN((x1 - 174.85) / 101.859164#)
         lngW = 11520*x1/640
         latW = 5760 *(y1+160)/320
-        lng = int(lngW)
-        lat = int(latW)
+        lng = INT(lngW)
+        lat = INT(latW)
 
                 ja=1+(lng)+(lat*11520)
-                get #3, ja, z$
-                h1=cvi(z$)
+                GET #3, ja, z$
+                h1=CVI(z$)
 
                 ja=1+(lng)+((lat+1)*11520)
-                get #3, ja, z$
-                h2=cvi(z$)
+                GET #3, ja, z$
+                h2=CVI(z$)
 
 
-                if LNG=11519 then ja=1+(lat*11520)  else ja=1+(lng+1)+(lat*11520)
-                get #3, ja, z$
-                h3=cvi(z$)
+                IF LNG=11519 THEN ja=1+(lat*11520)  ELSE ja=1+(lng+1)+(lat*11520)
+                GET #3, ja, z$
+                h3=CVI(z$)
 
-                if LNG=11519 then ja=1+((lat+1)*11520)  else ja=1+(lng+1)+((lat+1)*11520)
-                get #3, ja, z$
-                h4=cvi(z$)
+                IF LNG=11519 THEN ja=1+((lat+1)*11520)  ELSE ja=1+(lng+1)+((lat+1)*11520)
+                GET #3, ja, z$
+                h4=CVI(z$)
 
                         LATdel=latW-lat
                         LNDdel=lngW-lng
@@ -2148,7 +2186,7 @@
                         h=h+(h2*(LATdel)*(1-LNGdel))
                         h=h+(h3*(1-LATdel)*(LNGdel))
                         h=h+(h4*(LATdel)*(LNGdel))
-                return
+                RETURN
 
 '# Error handler. Output at (1, 30) `'stars' file is missing or incomplete` if
 '# the line number of the line where the error occurred (the 1-based source
@@ -2173,13 +2211,13 @@
 
 
 9100    OPEN "R", #1, "ORBITSSE.RND", 210
-        inpSTR$=space$(210)
-        get #1, 1, inpSTR$
-        mid$(inpSTR$,202,8)=mkd$(0)
-        put #1, 1, inpSTR$
-        close #1
-        open "O", #1, "orbitstr.txt"
-        if Ztel(26) = 8 then print #1, "OSBACKUP"
-        if Ztel(26) = 24 then print #1, "RESTART"
-        close #1
-        run "orbit5va"
+        inpSTR$=SPACE$(210)
+        GET #1, 1, inpSTR$
+        MID$(inpSTR$,202,8)=MKD$(0)
+        PUT #1, 1, inpSTR$
+        CLOSE #1
+        OPEN "O", #1, "orbitstr.txt"
+        IF Ztel(26) = 8 THEN PRINT #1, "OSBACKUP"
+        IF Ztel(26) = 24 THEN PRINT #1, "RESTART"
+        CLOSE #1
+        RUN "orbit5va"
